@@ -18,11 +18,21 @@ class MyListTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(title!,style: TextStyle(fontSize: 13.sp ),),
-      
-      subtitle:subtitle,
-      leading: leading,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          height: 10.h,
+          child: ListTile(
+            title: Text(
+              title!,
+              style: TextStyle(fontSize: 13.sp),
+            ),
+            subtitle: subtitle,
+            leading: leading,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -5,8 +5,10 @@ import 'package:flutter/src/widgets/framework.dart';
 
 import 'package:sizer/sizer.dart';
 import 'package:telegram/components/app_colors.dart';
+import 'package:telegram/view/home_view.dart';
 import 'package:telegram/widgets/my_divider.dart';
 import 'package:telegram/widgets/my_drawer_items.dart';
+import 'package:telegram/widgets/my_icon_button.dart';
 import 'package:telegram/widgets/my_text.dart';
 
 class SettingView extends StatefulWidget {
@@ -39,9 +41,13 @@ class _SettingViewState extends State<SettingView> {
             CustomScrollView(
               controller: scrollController,
               slivers: [
+                //*===================================================
+                //*================   App Bar Flexible    ============
+                //*===================================================
                 SliverAppBar(
                   backgroundColor: AppColor.darkBlue,
                   expandedHeight: 200,
+                  toolbarHeight: 7.h,
                   pinned: true,
                   flexibleSpace: LayoutBuilder(
                     builder: (context, constraints) {
@@ -50,14 +56,17 @@ class _SettingViewState extends State<SettingView> {
                         title: Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            AnimatedOpacity(
-                              duration: Duration(milliseconds: 300),
-                              opacity: top <= 130 ? 1.0 : 0.0,
-                              // child: CircleAvatar(
-                              //   backgroundImage: NetworkImage("https://img.freepik.com/free-photo/smiley-little-boy-isolated-pink_23-2148984798.jpg"),
-                              // ),
+                            // AnimatedOpacity(
+                            //   duration: Duration(milliseconds: 300),
+                            //   opacity: top <= 130 ? 1.0 : 0.0,
+                            //   child: CircleAvatar(
+                            //     backgroundImage: NetworkImage("https://img.freepik.com/free-photo/smiley-little-boy-isolated-pink_23-2148984798.jpg"),
+                            //   ),
+                            // ),
+                            MyText(
+                              text: "Osama Saleh",
+                              fontSize: 15.sp,
                             ),
-                            MyText(text: "Osama Saleh",fontSize: 15.sp,),
                           ],
                         ),
                         centerTitle: false,
@@ -67,6 +76,16 @@ class _SettingViewState extends State<SettingView> {
                                 "https://img.freepik.com/free-photo/smiley-little-boy-isolated-pink_23-2148984798.jpg")),
                       );
                     },
+                  ),
+                  leading: MyIconButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomeView(),
+                          ));
+                    },
+                    icon: Icons.arrow_back,
                   ),
                   actions: [
                     IconButton(
@@ -95,7 +114,7 @@ class _SettingViewState extends State<SettingView> {
                           //*========= items of Account =========
                           //*====================================
                           Padding(
-                            padding: EdgeInsets.only(left: 3.h),
+                            padding: EdgeInsets.only(left: 3.h, bottom: 2.h),
                             child: MyText(
                               text: "Account",
                               fontSize: 14.sp,
@@ -113,11 +132,7 @@ class _SettingViewState extends State<SettingView> {
                             ),
                           ),
 
-                          Padding(
-                            padding: EdgeInsets.only(left: 3.h),
-                            child: MyDivider(),
-                          ),
-
+                          const MyDivider(),
                           InkWell(
                             onTap: () {},
                             child: MyListTitle(
@@ -128,10 +143,7 @@ class _SettingViewState extends State<SettingView> {
                             ),
                           ),
 
-                          Padding(
-                            padding: EdgeInsets.only(left: 3.h),
-                            child: MyDivider(),
-                          ),
+                          const MyDivider(),
 
                           InkWell(
                             onTap: () {},
@@ -142,16 +154,18 @@ class _SettingViewState extends State<SettingView> {
                               subtitleSize: 12.sp,
                             ),
                           ),
-
-                          MyDivider(
+                          SizedBox(
                             height: 3.h,
-                            color: Colors.grey.withOpacity(.3),
+                          ),
+                          MyDivider(
+                            thickness: 3.h,
                           ),
                           //*====================================
                           //*======= items of Settings  =========
                           //*====================================
                           Padding(
-                            padding: EdgeInsets.only(left: 3.h, top: 3.h),
+                            padding: EdgeInsets.only(
+                                left: 3.h, bottom: 2.h, top: 3.h),
                             child: MyText(
                               text: "Settings",
                               fontSize: 14.sp,
@@ -169,10 +183,7 @@ class _SettingViewState extends State<SettingView> {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 13.w),
-                            child: MyDivider(),
-                          ),
+                          const MyDivider(),
                           InkWell(
                             onTap: () {},
                             child: MyListTitle(
@@ -183,10 +194,7 @@ class _SettingViewState extends State<SettingView> {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 13.w),
-                            child: MyDivider(),
-                          ),
+                          const MyDivider(),
                           InkWell(
                             onTap: () {},
                             child: MyListTitle(
@@ -197,10 +205,7 @@ class _SettingViewState extends State<SettingView> {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 13.w),
-                            child: MyDivider(),
-                          ),
+                          const MyDivider(),
                           InkWell(
                             onTap: () {},
                             child: MyListTitle(
@@ -211,10 +216,7 @@ class _SettingViewState extends State<SettingView> {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 13.w),
-                            child: MyDivider(),
-                          ),
+                          const MyDivider(),
                           InkWell(
                             onTap: () {},
                             child: MyListTitle(
@@ -225,10 +227,7 @@ class _SettingViewState extends State<SettingView> {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 13.w),
-                            child: MyDivider(),
-                          ),
+                          const MyDivider(),
                           InkWell(
                             onTap: () {},
                             child: MyListTitle(
@@ -239,10 +238,7 @@ class _SettingViewState extends State<SettingView> {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 13.w),
-                            child: MyDivider(),
-                          ),
+                          const MyDivider(),
                           InkWell(
                             onTap: () {},
                             child: MyListTitle(
@@ -253,10 +249,7 @@ class _SettingViewState extends State<SettingView> {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 13.w),
-                            child: MyDivider(),
-                          ),
+                          const MyDivider(),
                           InkWell(
                             onTap: () {},
                             child: MyListTitle(
@@ -267,10 +260,7 @@ class _SettingViewState extends State<SettingView> {
                               ),
                             ),
                           ),
-                          MyDivider(
-                            height: 3.h,
-                            color: Colors.grey.withOpacity(.3),
-                          ),
+                          const MyDivider(),
                           InkWell(
                             onTap: () {},
                             child: MyListTitle(
@@ -281,15 +271,18 @@ class _SettingViewState extends State<SettingView> {
                               ),
                             ),
                           ),
-                          MyDivider(
+                          SizedBox(
                             height: 3.h,
-                            color: Colors.grey.withOpacity(.3),
+                          ),
+                          MyDivider(
+                            thickness: 3.h,
                           ),
                           //*====================================
                           //*======= items of Help  =============
                           //*====================================
                           Padding(
-                            padding: EdgeInsets.only(left: 3.h, top: 3.h),
+                            padding: EdgeInsets.only(
+                                left: 3.h, bottom: 2.h, top: 3.h),
                             child: MyText(
                               text: "Help",
                               fontSize: 14.sp,
@@ -307,10 +300,7 @@ class _SettingViewState extends State<SettingView> {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 13.w),
-                            child: MyDivider(),
-                          ),
+                          const MyDivider(),
                           InkWell(
                             onTap: () {},
                             child: MyListTitle(
@@ -330,10 +320,7 @@ class _SettingViewState extends State<SettingView> {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 13.w),
-                            child: MyDivider(),
-                          ),
+                          const MyDivider(),
                           InkWell(
                             onTap: () {},
                             child: MyListTitle(

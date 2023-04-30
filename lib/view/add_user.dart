@@ -1,9 +1,12 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:sizer/sizer.dart';
 import 'package:telegram/components/app_colors.dart';
 import 'package:telegram/view/chat_view.dart';
+import 'package:telegram/view/home_view.dart';
 import 'package:telegram/widgets/my_app_bar.dart';
 import 'package:telegram/widgets/my_drawer_items.dart';
 
@@ -13,11 +16,12 @@ class AddUser extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(
+      appBar: 
+      MyAppBar(
         title: "New Messge",
         icon1: Icons.search,
         onPressed1: () {
-          print("Serach");
+          print("Search");
         },
         icon2: Icons.sort,
         onPressed2: () {
@@ -25,35 +29,46 @@ class AddUser extends StatelessWidget {
         },
         leading: IconButton(
             onPressed: () {
-              Navigator.pushReplacement(
+              Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ChatView(),
+                    builder: (context) => const HomeView(),
                   ));
             },
-            icon:const Icon(Icons.arrow_back)),
+            icon: Icon(Icons.arrow_back,size: 20.sp,)),
       ),
+      
+      
+      
       body: Container(
-        height:32.h,
+        height: 32.h,
         color: AppColor.white,
         child: Column(
           children: [
             MyListTitle(
               title: "New Group",
-              leading: Icon(Icons.people_outline,size: 25.sp,),
+              leading: Icon(
+                Icons.people_outline,
+                size: 20.sp,
+              ),
             ),
             MyListTitle(
               title: "New Secret Chat",
-              leading: Icon(Icons.lock_outline_rounded,size: 25.sp,),
+              leading: Icon(
+                Icons.lock_outline_rounded,
+                size: 20.sp,
+              ),
             ),
             MyListTitle(
               title: "New Channel",
-              leading: Icon(Icons.campaign_outlined,size: 25.sp,),
+              leading: Icon(
+                Icons.campaign_outlined,
+                size: 20.sp,
+              ),
             )
           ],
         ),
       ),
-      
     );
   }
 }
