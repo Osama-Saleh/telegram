@@ -3,9 +3,13 @@
 import 'package:flutter/material.dart';
 
 import 'package:sizer/sizer.dart';
+import 'package:telegram/Module/user_model.dart';
 import 'package:telegram/components/app_colors.dart';
+import 'package:telegram/controller/user_controller.dart';
+import 'package:telegram/state_management/home_cubit.dart';
 import 'package:telegram/view/add_user.dart';
 import 'package:telegram/view/chat_view.dart';
+import 'package:telegram/widgets/my_show_model.dart';
 
 import 'package:telegram/widgets/my_text.dart';
 import 'package:telegram/widgets/my_text_form_field.dart';
@@ -18,15 +22,17 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  // String? name = "Osama";
+  GlobalKey<AnimatedListState> animatedKey = GlobalKey();
+
   bool? isLast = false;
   var pageController = PageController();
+  UserModel? userModel = UserModel();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageView(
         controller: pageController,
-        physics:const NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         onPageChanged: (value) {
           if (value == 1) {
             setState(() {
@@ -38,7 +44,7 @@ class _HomeViewState extends State<HomeView> {
             });
           }
         },
-        children:  [ChatView(), AddUser()],
+        children: [ChatView(), AddUser()],
       ),
       //*=============================================
       //* Floating Action Button
@@ -54,63 +60,7 @@ class _HomeViewState extends State<HomeView> {
                   curve: Curves.easeInOut);
               if (isLast!) {
                 print("object");
-                showModalBottomSheet(
-                    context: context,
-                    builder: (context) {
-                      return Padding(
-                        padding: EdgeInsets.all(3.h),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            MyText(
-                              text: "New Contact",
-                              color: AppColor.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14.sp,
-                            ),
-                            SizedBox(
-                              height: 2.h,
-                            ),
-                            MyTextFormField(
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5.sp)),
-                              labelText: "First name (required)",
-                            ),
-                            SizedBox(
-                              height: 2.h,
-                            ),
-                            MyTextFormField(
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5.sp)),
-                              labelText: "Last name (optional)",
-                            ),
-                            SizedBox(
-                              height: 2.h,
-                            ),
-                            MyTextFormField(
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5.sp)),
-                              labelText: "Phone number",
-                            ),
-                            SizedBox(
-                              height: 2.h,
-                            ),
-                            Container(
-                              width: double.infinity,
-                              height: 8.h,
-                              child: ElevatedButton(
-                                  onPressed: () {},
-                                  child: MyText(
-                                    text: "Create Contact",
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.bold,
-                                  )),
-                            )
-                          ],
-                        ),
-                      );
-                    });
+                myShowModealBottomSheet(context);
               }
             },
             child: isLast == true

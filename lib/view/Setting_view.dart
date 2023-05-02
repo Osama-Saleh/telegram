@@ -30,11 +30,14 @@ class _SettingViewState extends State<SettingView> {
     scrollController.addListener(() {
       setState(() {});
     });
+    
   }
+
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return 
+    Scaffold(
         backgroundColor: AppColor.white,
         body: Stack(
           children: [
@@ -46,23 +49,23 @@ class _SettingViewState extends State<SettingView> {
                 //*===================================================
                 SliverAppBar(
                   backgroundColor: AppColor.darkBlue,
-                  expandedHeight: 200,
-                  toolbarHeight: 7.h,
+                  expandedHeight:200,
+                  toolbarHeight: 8.h,
                   pinned: true,
                   flexibleSpace: LayoutBuilder(
                     builder: (context, constraints) {
                       top = constraints.biggest.height;
                       return FlexibleSpaceBar(
                         title: Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
+                          // crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            // AnimatedOpacity(
-                            //   duration: Duration(milliseconds: 300),
-                            //   opacity: top <= 130 ? 1.0 : 0.0,
-                            //   child: CircleAvatar(
-                            //     backgroundImage: NetworkImage("https://img.freepik.com/free-photo/smiley-little-boy-isolated-pink_23-2148984798.jpg"),
-                            //   ),
-                            // ),
+                            AnimatedOpacity(
+                              duration: Duration(milliseconds: 300),
+                              opacity: top <= 130 ? 1.0 : 0.0,
+                              child: CircleAvatar(
+                                backgroundImage: NetworkImage("https://img.freepik.com/free-photo/smiley-little-boy-isolated-pink_23-2148984798.jpg"),
+                              ),
+                            ),
                             MyText(
                               text: "Osama Saleh",
                               fontSize: 15.sp,
@@ -70,7 +73,7 @@ class _SettingViewState extends State<SettingView> {
                           ],
                         ),
                         centerTitle: false,
-                        background: const Image(
+                        background: Image(
                             fit: BoxFit.cover,
                             image: NetworkImage(
                                 "https://img.freepik.com/free-photo/smiley-little-boy-isolated-pink_23-2148984798.jpg")),
