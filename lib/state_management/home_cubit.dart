@@ -1,11 +1,14 @@
 // ignore_for_file: avoid_print, unused_local_variable
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:telegram/Module/user_model.dart';
+import 'package:telegram/Module/user_model_fire.dart';
 import 'package:telegram/controller/user_controller.dart';
 import 'package:telegram/state_management/cubit_states.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class HomeCubit extends Cubit<HomeStates> {
   HomeCubit() : super(HomeInitState());
@@ -18,7 +21,7 @@ class HomeCubit extends Cubit<HomeStates> {
   Future<void> addName(String fNameController, String lNameController) async {
     userModel!.fName = fNameController;
     userModel!.lName = lNameController;
-    emit(ChangeName());
+    emit(ChangeNameState());
     print("ChangeName");
   }
 
@@ -36,27 +39,118 @@ class HomeCubit extends Cubit<HomeStates> {
   //*=============================================
   //?================= Show Password =============
   //*=============================================
-  bool isVisibel = true;
-  IconData? iconData=Icons.visibility_off;
-  void showPassword() {
-    isVisibel = !isVisibel;
-    if (isVisibel) {
-      iconData = Icons.visibility_off;
-    } else {
-      iconData = Icons.visibility;
-    }
-    emit(ShowPassword());
-    print("ShowPassword");
+
+  IconData suffix = Icons.visibility_off;
+  bool showPassword = true;
+  void changePasswordVisibility() {
+    showPassword = !showPassword;
+    suffix = showPassword ? Icons.visibility_off : Icons.visibility;
+    emit(ShowPasswordState());
   }
 
   //*=============================================
-  //?================= Login  user ===============
+  //?=============== Register  user ==============
   //*=============================================
-  Future<void> signUp() async {
-    final credential =
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: "emailAddress@gmail.com",
-      password: "password",
-    );
+  Future<void> register({
+    String? name,
+    String? mail,
+    String? password,
+  }) async {
+    try {
+      final credential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+        email: mail!,
+        password: password!,
+      )
+          .then((value) {
+        saveUserDate(name: name, mail: mail, id: value.user!.uid);
+        emit(RegisterSuccessState());
+        print("RegisterSuccessState");
+      }).catchError((onError) {
+        emit(RegisterErrorState());
+        print("RegisterErrorState");
+        Fluttertoast.showToast(
+            msg: "The email address is badly formatted.",
+            toastLength: Toast.LENGTH_SHORT,
+            backgroundColor: Colors.red);
+      });
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+        Fluttertoast.showToast(
+            msg: "The password provided is too weak.",
+            toastLength: Toast.LENGTH_SHORT,
+            backgroundColor: Colors.red);
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+        Fluttertoast.showToast(
+            msg: "The account already exists for that email.",
+            toastLength: Toast.LENGTH_SHORT,
+            backgroundColor: Colors.red);
+      }
+    } catch (e) {
+      print("error Sing Up ${e.toString()}");
+    }
+  }
+
+  //*=============================================
+  //?===============   Sign Up    ================
+  //*=============================================
+  Future<void> signUp({
+    String? mail,
+    String? password,
+  }) async {
+    try {
+      final credential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: mail!, password: password!);
+      print("signUp : ${credential.user!.uid}");
+      emit(SignUpSuccessState());
+      print("SignUpSuccessState");
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+        Fluttertoast.showToast(
+            msg: "email faild ",
+            toastLength: Toast.LENGTH_SHORT,
+            backgroundColor: Colors.red);
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+        Fluttertoast.showToast(
+            msg: "Wrong password",
+            toastLength: Toast.LENGTH_SHORT,
+            backgroundColor: Colors.red);
+      }
+      Fluttertoast.showToast(
+          msg: "The email address is badly formatted",
+          toastLength: Toast.LENGTH_SHORT,
+          backgroundColor: Colors.red);
+      emit(SignUpErrorState());
+      print("SignUpErrorState");
+    }
+  }
+
+  //*=============================================
+  //?========= save user data in firebase ========
+  //*=============================================
+  Future<void> saveUserDate({
+    String? name,
+    String? mail,
+    String? id,
+  }) async {
+    emit(SaveUserDataLoadingState());
+    print("SaveUserDataLoadingState");
+    UserModelFire userModelFire =
+        UserModelFire(name: name, mail: mail, token: id);
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(id)
+        .set(userModelFire.toMap())
+        .then((value) {
+      emit(SaveUserDataSuccessState());
+      print("SaveUserDataSuccessState");
+    }).catchError((onError) {
+      emit(SaveUserDataErrorState());
+      print("SaveUserDataErrorState $onError");
+    });
   }
 }

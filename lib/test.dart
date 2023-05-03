@@ -21,20 +21,25 @@ class TestView extends StatefulWidget {
 
 class _TestViewState extends State<TestView> {
   // var top = 0.0;
-  bool isChick = true;
-  double? height;
-  bool animate = false;
+  // bool isChick = true;
+  // double? height;
+  double? a_height;
+  double? c_height = 28.h;
+  bool isChick = false;
 
   Future startAnimation() async {
     await Future.delayed(const Duration(milliseconds: 500));
     setState(() {
-      animate = true;
+      isChick = true;
     });
   }
+
+  
 
   @override
   void initState() {
     startAnimation();
+
     super.initState();
   }
 
@@ -56,110 +61,28 @@ class _TestViewState extends State<TestView> {
       //* (Custom AppBar) apper container if apllication have new version
       //*========================================================
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(height ?? 39.7.h),
+        preferredSize: Size.fromHeight(a_height ?? 39.7.h),
         child: SafeArea(
           child: AnimatedContainer(
-            height: animate ? 300 : 0,
-            duration: Duration(milliseconds: 1000),
+            height: isChick ? a_height ?? 82.h  : 8.h,
+            duration: Duration(milliseconds: isChick ?1450 :680),
             curve: Curves.easeIn,
             color: isChick ? AppColor.darkBlue : AppColor.white,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                if (isChick)
                   SafeArea(
                     child: AnimatedContainer(
-                      height: animate ? 180 : 0,
-                      duration: Duration(milliseconds: 850),
+                      //* 180 =>0    300=>
+                      height: isChick ? c_height : 0,
+                      duration: Duration(milliseconds:isChick ? 850: 770),
+                      
                       curve: Curves.easeIn,
                       color: Colors.red,
                       child: Column(
                         children: [
-                          //!-----------------------------------------------
-                          // isChick
-                          //     ? SafeArea(
-                          //         child: FutureBuilder(
-                          //             future: _showList(),
-
-                          //             /// will wait untill box animation completed
-                          //             builder: (context, snapshot) {
-                          //               if (!snapshot.hasData) {
-                          //                 return SizedBox();
-                          //               }
-                          //               return Column(
-                          //                 children: [
-                          //                   Row(
-                          //                     mainAxisAlignment:
-                          //                         MainAxisAlignment.center,
-                          //                     children: [
-                          //                       Expanded(
-                          //                         child: MyText(
-                          //                           text:
-                          //                               "Update your Spotify app language",
-                          //                           textAlig:
-                          //                               TextAlign.center,
-                          //                           fontSize: 15.sp,
-                          //                           color: AppColor.black,
-                          //                         ),
-                          //                       ),
-                          //                       MyIconButton(
-                          //                         icon: Icons.close,
-                          //                         onPressed: () {
-                          //                           setState(() {
-                          //                             isChick = !isChick;
-                          //                             height = 9.h;
-                          //                           });
-                          //                         },
-                          //                       )
-                          //                     ],
-                          //                   ),
-                          //                   MyText(
-                          //                     text:
-                          //                         "You can now set the language of your app, notifications, and other communications from Spotify.",
-                          //                     textAlig: TextAlign.center,
-                          //                     fontSize: 12.sp,
-                          //                     color: AppColor.black,
-                          //                   ),
-                          //                   SizedBox(
-                          //                     height: 5.h,
-                          //                   ),
-                          //                   Container(
-                          //                     // height: animate ? 7.h : 0.h,
-                          //                     // duration: Duration(seconds: 2),
-
-                          //                     child: ElevatedButton(
-                          //                       onPressed: () {},
-                          //                       style:
-                          //                           ElevatedButton.styleFrom(
-                          //                               shape:
-                          //                                   RoundedRectangleBorder(
-                          //                                 borderRadius:
-                          //                                     BorderRadius
-                          //                                         .circular(
-                          //                                             30.0),
-                          //                               ),
-                          //                               backgroundColor:
-                          //                                   Colors.white
-                          //                                       .withOpacity(
-                          //                                           .4)),
-                          //                       child: MyText(
-                          //                         text: "CONTINUE",
-                          //                         textAlig: TextAlign.center,
-                          //                         fontSize: 12.sp,
-                          //                       ),
-                          //                     ),
-                          //                   )
-                          //                 ],
-                          //               );
-                          //             }),
-                          //       )
-                          //     : SizedBox.shrink(),
-                          //!-----------------------------------------------------
-
-                          Container(
-                            // height: animate ? 30 : 0,
-                            // duration: Duration(milliseconds: 6000),
-                            // curve: Curves.easeIn,
+                          Expanded(
+                            flex: 2,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -176,7 +99,9 @@ class _TestViewState extends State<TestView> {
                                   onPressed: () {
                                     setState(() {
                                       isChick = !isChick;
-                                      height = 9.h;
+                                      // a_height = 9.h;
+
+                                      isChick = false;
                                     });
                                   },
                                 )
@@ -184,6 +109,7 @@ class _TestViewState extends State<TestView> {
                             ),
                           ),
                           Expanded(
+                            flex: 2,
                             child: MyText(
                               text:
                                   "You can now set the language of your app, notifications, and other communications from Spotify.",
@@ -192,13 +118,7 @@ class _TestViewState extends State<TestView> {
                               color: AppColor.black,
                             ),
                           ),
-                          SizedBox(
-                            height: 5.h,
-                          ),
-                          Container(
-                            // height: animate ? 7.h : 0.h,
-                            // duration: Duration(seconds: 2),
-
+                          Expanded(
                             child: ElevatedButton(
                               onPressed: () {},
                               style: ElevatedButton.styleFrom(
@@ -223,10 +143,97 @@ class _TestViewState extends State<TestView> {
                     child: AppBar(
                       title: Text("Done"),
                       centerTitle: true,
-                      leading: Icon(Icons.arrow_back),
+                      leading: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              isChick = true;
+                              print(isChick);
+                            });
+                          },
+                          icon: Icon(Icons.arrow_back)),
                     ),
                   ),
                 )
+                //!-----------------------------------------------
+                // isChick
+                //     ? SafeArea(
+                //         child: FutureBuilder(
+                //             future: _showList(),
+
+                //             /// will wait untill box animation completed
+                //             builder: (context, snapshot) {
+                //               if (!snapshot.hasData) {
+                //                 return SizedBox();
+                //               }
+                //               return Column(
+                //                 children: [
+                //                   Row(
+                //                     mainAxisAlignment:
+                //                         MainAxisAlignment.center,
+                //                     children: [
+                //                       Expanded(
+                //                         child: MyText(
+                //                           text:
+                //                               "Update your Spotify app language",
+                //                           textAlig:
+                //                               TextAlign.center,
+                //                           fontSize: 15.sp,
+                //                           color: AppColor.black,
+                //                         ),
+                //                       ),
+                //                       MyIconButton(
+                //                         icon: Icons.close,
+                //                         onPressed: () {
+                //                           setState(() {
+                //                             isChick = !isChick;
+                //                             height = 9.h;
+                //                           });
+                //                         },
+                //                       )
+                //                     ],
+                //                   ),
+                //                   MyText(
+                //                     text:
+                //                         "You can now set the language of your app, notifications, and other communications from Spotify.",
+                //                     textAlig: TextAlign.center,
+                //                     fontSize: 12.sp,
+                //                     color: AppColor.black,
+                //                   ),
+                //                   SizedBox(
+                //                     height: 5.h,
+                //                   ),
+                //                   Container(
+                //                     // height: animate ? 7.h : 0.h,
+                //                     // duration: Duration(seconds: 2),
+
+                //                     child: ElevatedButton(
+                //                       onPressed: () {},
+                //                       style:
+                //                           ElevatedButton.styleFrom(
+                //                               shape:
+                //                                   RoundedRectangleBorder(
+                //                                 borderRadius:
+                //                                     BorderRadius
+                //                                         .circular(
+                //                                             30.0),
+                //                               ),
+                //                               backgroundColor:
+                //                                   Colors.white
+                //                                       .withOpacity(
+                //                                           .4)),
+                //                       child: MyText(
+                //                         text: "CONTINUE",
+                //                         textAlig: TextAlign.center,
+                //                         fontSize: 12.sp,
+                //                       ),
+                //                     ),
+                //                   )
+                //                 ],
+                //               );
+                //             }),
+                //       )
+                //     : SizedBox.shrink(),
+                //!-----------------------------------------------------
               ],
             ),
           ),

@@ -48,8 +48,8 @@ class MyApp extends StatelessWidget {
                 ),
                 home: 
                 // SettingView()
-                TestView(),
-                // RegisterView()
+                // TestView(),
+                RegisterView()
               );
             },
           );
