@@ -5,14 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:telegram/Module/user_model.dart';
 import 'package:telegram/components/app_colors.dart';
-import 'package:telegram/controller/user_controller.dart';
-import 'package:telegram/state_management/home_cubit.dart';
 import 'package:telegram/view/add_user.dart';
 import 'package:telegram/view/chat_view.dart';
 import 'package:telegram/widgets/my_show_model.dart';
-
-import 'package:telegram/widgets/my_text.dart';
-import 'package:telegram/widgets/my_text_form_field.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -27,6 +22,7 @@ class _HomeViewState extends State<HomeView> {
   bool? isLast = false;
   var pageController = PageController();
   UserModel? userModel = UserModel();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,7 +40,7 @@ class _HomeViewState extends State<HomeView> {
             });
           }
         },
-        children: [ChatView(), AddUser()],
+        children: [ChatView(),const AddUser()],
       ),
       //*=============================================
       //* Floating Action Button
@@ -76,3 +72,4 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 }
+

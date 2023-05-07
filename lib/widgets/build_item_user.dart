@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import 'package:telegram/Module/user_model.dart';
+import 'package:telegram/Module/user_model_fire.dart';
 import 'package:telegram/components/app_colors.dart';
 import 'package:telegram/controller/user_controller.dart';
 import 'package:telegram/state_management/cubit_states.dart';
@@ -15,13 +16,13 @@ import 'package:telegram/widgets/my_text.dart';
 class BuildItemsUser extends StatelessWidget {
   const BuildItemsUser({
     super.key,
-    this.userModel,
-    this.index,
-    this.name,
+    // this.userModel,
+    this.model,
+    // this.name,
   });
-  final UserModel? userModel;
-  final int? index;
-  final String? name;
+  // final UserModel? userModel;
+  final UserModelFire? model;
+  // final String? name;
   @override
   Widget build(BuildContext context) {
     var cubit = HomeCubit.get(context);
@@ -30,7 +31,6 @@ class BuildItemsUser extends StatelessWidget {
       builder: (context, state) {
         return Container(
           height: 17.8.h,
-          // padding: EdgeInsets.only(left: 3.h,right: 3.h),
           child: Column(
             children: [
               Container(
@@ -40,7 +40,7 @@ class BuildItemsUser extends StatelessWidget {
                     Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ChattingView(index: index),
+                          builder: (context) => ChattingView(model: model!),
                         ));
                   },
                   child: Row(
@@ -61,13 +61,13 @@ class BuildItemsUser extends StatelessWidget {
                             ? Center(
                                 child: MyText(
                                   text:
-                                      "${UserController.userController[index!].fName![0].toUpperCase()}${UserController.userController[index!].lName![0].toUpperCase()}",
+                                      "${model!.name![0].toUpperCase()}${model!.name![1].toUpperCase()}",
                                   color: AppColor.white,
                                   fontSize: 10.sp,
                                 ),
                               )
                             : Image(
-                                image: NetworkImage("${userModel!.image}"),
+                                image: NetworkImage("${model!.image}"),
                                 fit: BoxFit.cover,
                                 height: 15.h,
                                 width: 15.w,
@@ -82,7 +82,7 @@ class BuildItemsUser extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           MyText(
-                            text: "${UserController.userController[index!].fName} ${UserController.userController[index!].lName}",
+                            text: "${model!.name}",
                             fontSize: 15.sp,
                           ),
                           MyText(

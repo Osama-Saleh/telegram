@@ -1,8 +1,10 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
+import 'package:telegram/Module/user_model_fire.dart';
 import 'package:telegram/components/app_colors.dart';
-import 'package:telegram/controller/user_controller.dart';
 import 'package:telegram/state_management/cubit_states.dart';
 import 'package:telegram/state_management/home_cubit.dart';
 import 'package:telegram/view/home_view.dart';
@@ -11,9 +13,9 @@ import 'package:telegram/widgets/my_text.dart';
 import 'package:telegram/widgets/my_text_form_field.dart';
 
 class ChattingView extends StatelessWidget {
-  const ChattingView({super.key, this.index});
-
-  final int? index;
+  ChattingView({super.key, this.model});
+  TextEditingController messageController = TextEditingController();
+  final UserModelFire? model;
 
   @override
   Widget build(BuildContext context) {
@@ -41,13 +43,13 @@ class ChattingView extends StatelessWidget {
                         ? Center(
                             child: MyText(
                             text:
-                                "${UserController.userController[index!].fName![0].toUpperCase()}${UserController.userController[index!].lName![0].toUpperCase()}",
+                                "${model!.name![0].toUpperCase()}${model!.name![1].toUpperCase()}",
                             color: AppColor.white,
                             fontSize: 12.sp,
                           ))
                         : Image(
                             image: NetworkImage(
-                                "${UserController.userController[index!].image}"),
+                                "${model!.image}"),
                             fit: BoxFit.cover,
                           ),
                   ),
@@ -55,8 +57,7 @@ class ChattingView extends StatelessWidget {
                     width: 3.w,
                   ),
                   MyText(
-                    text:
-                        "${UserController.userController[index!].fName} ${UserController.userController[index!].lName}",
+                    text: "${model!.name}",
                     fontSize: 15.sp,
                   ),
                 ],
@@ -73,8 +74,58 @@ class ChattingView extends StatelessWidget {
               ),
             ),
             body: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(child: ListView()),
+                Expanded(
+                    child: ListView(
+                  children: [
+                    //* receive message
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadiusDirectional.only(
+                                  bottomEnd: Radius.circular(10),
+                                  topEnd: Radius.circular(10),
+                                  bottomStart: Radius.circular(10))),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: MyText(
+                              text: "Hollo",
+                              fontSize: 15.sp,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    //* my message
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Align(
+                        alignment: AlignmentDirectional.topEnd,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.green[300]!.withOpacity(.5),
+                              borderRadius: const BorderRadiusDirectional.only(
+                                  bottomEnd: Radius.circular(10),
+                                  topStart: Radius.circular(10),
+                                  bottomStart: Radius.circular(10))),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: MyText(
+                              text: "hi",
+                              fontSize: 15.sp,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )),
+                const Spacer(),
                 Container(
                   height: 10.h,
                   width: double.infinity,
@@ -91,7 +142,9 @@ class ChattingView extends StatelessWidget {
                       ),
                       Expanded(
                         child: MyTextFormField(
-                            hintText: "Message", border: InputBorder.none),
+                            controller: messageController,
+                            hintText: "Message",
+                            border: InputBorder.none),
                       ),
                       MyIconButton(
                         onPressed: () {},

@@ -35,11 +35,17 @@ class _RegisterViewState extends State<RegisterView> {
     return BlocConsumer<HomeCubit, HomeStates>(
       listener: (context, state) {
         if (state is RegisterSuccessState) {
-          
           Fluttertoast.showToast(
-              msg: "Register Success",
-              toastLength: Toast.LENGTH_SHORT,
-              backgroundColor: Colors.green);
+                  msg: "Register Success",
+                  toastLength: Toast.LENGTH_SHORT,
+                  backgroundColor: Colors.green)
+              .whenComplete(() {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LoginView(),
+                ));
+          });
         }
       },
       builder: (context, state) {

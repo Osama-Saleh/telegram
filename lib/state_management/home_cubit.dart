@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, unused_local_variable
+// ignore_for_file: avoid_print, unused_local_variable, avoid_function_literals_in_foreach_calls
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:telegram/Module/user_model.dart';
 import 'package:telegram/Module/user_model_fire.dart';
+import 'package:telegram/components/const.dart';
 import 'package:telegram/controller/user_controller.dart';
 import 'package:telegram/state_management/cubit_states.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -94,9 +95,9 @@ class HomeCubit extends Cubit<HomeStates> {
   }
 
   //*=============================================
-  //?===============   Sign Up    ================
+  //?===============   Login    ================
   //*=============================================
-  Future<void> signUp({
+  Future<void> login({
     String? mail,
     String? password,
   }) async {
@@ -104,8 +105,8 @@ class HomeCubit extends Cubit<HomeStates> {
       final credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: mail!, password: password!);
       print("signUp : ${credential.user!.uid}");
-      emit(SignUpSuccessState());
-      print("SignUpSuccessState");
+      emit(LoginSuccessState(credential.user!.uid));
+      print("LoginSuccessState");
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
@@ -124,8 +125,8 @@ class HomeCubit extends Cubit<HomeStates> {
           msg: "The email address is badly formatted",
           toastLength: Toast.LENGTH_SHORT,
           backgroundColor: Colors.red);
-      emit(SignUpErrorState());
-      print("SignUpErrorState");
+      emit(LoginErrorState());
+      print("LoginErrorState");
     }
   }
 
@@ -153,4 +154,33 @@ class HomeCubit extends Cubit<HomeStates> {
       print("SaveUserDataErrorState $onError");
     });
   }
+  //*=============================================
+  //?========= Get All user in application =======
+  //*=============================================
+
+  List<UserModelFire>? countUsers;
+  Future getAllUser() async {
+    countUsers = [];
+    emit(GetAllUserLoadingState());
+    print("GetAllUserLoadingState");
+    var value = await FirebaseFirestore.instance.collection('users').get();
+    value.docs.forEach((element) {
+      print(" element ${element.data()}");
+      if (element.data()["token"] != MyConst.uidUser) {
+        countUsers!.add(UserModelFire.fromJson(element.data()));
+      emit(GetAllUserSuccessState());
+      print("GetAllUserSuccessState");
+      }
+    });
+    print("countUsers : ${countUsers!.length}");
+    
+  }
+
+  //*=============================================
+  //?=============== send messages ===============
+  //*=============================================
+ void sendMessage(){
+  
+ }
+
 }

@@ -3,10 +3,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sizer/sizer.dart';
 import 'package:telegram/components/app_colors.dart';
+import 'package:telegram/components/const.dart';
+import 'package:telegram/controller/local_storage/hive.dart';
 import 'package:telegram/state_management/cubit_states.dart';
 import 'package:telegram/state_management/home_cubit.dart';
+import 'package:telegram/view/home_view.dart';
 import 'package:telegram/widgets/my_elevated_button.dart';
 import 'package:telegram/widgets/my_text.dart';
 import 'package:telegram/widgets/my_text_form_field.dart';
@@ -24,13 +28,38 @@ class _LoginViewState extends State<LoginView> {
   TextEditingController passwordController = TextEditingController();
 
   var formKey = GlobalKey<FormState>();
+  late Box myBox;
 
   @override
   Widget build(BuildContext context) {
     var cubit = HomeCubit.get(context);
+
     return BlocConsumer<HomeCubit, HomeStates>(
-      listener: (context, state) {
-        if (state is SignUpSuccessState) {
+      listener: (context, state) async {
+        if (state is LoginSuccessState) {
+          // HiveHelper.boxName = "userData";
+          await HiveHelper.openBox(nameBox: "userData");
+          await HiveHelper.setData(key: "userToken", value: "${state.token}")
+              .whenComplete(() {
+            MyConst.uidUser = HiveHelper.getData(key: "userToken");
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomeView(),
+                ));
+            print(
+                "haha 1 : ${MyConst.uidUser} hahah 2 ${HiveHelper.getData(key: "userToken")}");
+          });
+          //!----------------------------------------------------------------
+          //   myBox = Hive.box("myBox");
+
+          // await  myBox.put("token", "${state.token}").whenComplete(() {
+          //     print('hahahah');
+          //     MyConst.uidUser = myBox.get("token");
+          //       print('radwan => ${myBox.get("token")}  radwan2 => ${MyConst.uidUser}');
+          //   });
+
+          //!----------------------------------------------------------------
           Fluttertoast.showToast(
               msg: "Login Success",
               toastLength: Toast.LENGTH_SHORT,
@@ -46,7 +75,7 @@ class _LoginViewState extends State<LoginView> {
               child: Align(
                 alignment: Alignment.center,
                 child: SingleChildScrollView(
-                  physics:const BouncingScrollPhysics(),
+                  physics: const BouncingScrollPhysics(),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,10 +152,10 @@ class _LoginViewState extends State<LoginView> {
                             text: "Log In",
                             border: 10,
                             onPressed: () {
-                              cubit.signUp(
-                                  mail: mailController.text,
-                                  password: passwordController.text,
-                                  );
+                              cubit.login(
+                                mail: mailController.text,
+                                password: passwordController.text,
+                              );
                               if (formKey.currentState!.validate()) {}
                             },
                           ),
