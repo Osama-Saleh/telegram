@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:telegram/Module/message_model.dart';
 import 'package:telegram/Module/user_model.dart';
 import 'package:telegram/Module/user_model_fire.dart';
 import 'package:telegram/components/const.dart';
@@ -168,19 +169,80 @@ class HomeCubit extends Cubit<HomeStates> {
       print(" element ${element.data()}");
       if (element.data()["token"] != MyConst.uidUser) {
         countUsers!.add(UserModelFire.fromJson(element.data()));
-      emit(GetAllUserSuccessState());
-      print("GetAllUserSuccessState");
+        emit(GetAllUserSuccessState());
+        print("GetAllUserSuccessState");
       }
     });
     print("countUsers : ${countUsers!.length}");
-    
   }
 
   //*=============================================
-  //?=============== send messages ===============
+  //?=======  save messages in firebase =========
   //*=============================================
- void sendMessage(){
-  
- }
+  void sendMessage({
+    String? receiverId,
+    String? text,
+    String? dateTime,
+  }) {
+    MessageModel messageModel = MessageModel(
+        receiverId: receiverId,
+        text: text,
+        dateTime: dateTime,
+        senderId: MyConst.uidUser);
+    //* my chat
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(MyConst.uidUser)
+        .collection("Chats")
+        .doc(receiverId)
+        .collection("Messages")
+        .add(messageModel.toMap())
+        .then((value) {
+      emit(SendMessageSuccessState());
+      print("SendMessageSuccessState");
+    }).catchError((onError) {
+      emit(SendMessageErrorState());
+      print("SendMessageErrorState");
+    });
+    //* receiver chat
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(receiverId)
+        .collection("Chats")
+        .doc(MyConst.uidUser)
+        .collection("Messages")
+        .add(messageModel.toMap())
+        .then((value) {
+      emit(SendMessageSuccessState());
+      print("SendMessageSuccessState");
+    }).catchError((onError) {
+      emit(SendMessageErrorState());
+      print("SendMessageErrorState");
+    });
+  }
 
+  //*==============================================================
+  //?=======  get messages from firebase to message model =========
+  //*==============================================================
+  List<MessageModel>? messages;
+  void getMessage({
+    String? receiverId,
+  }) {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(MyConst.uidUser)
+        .collection("Chats")
+        .doc(receiverId)
+        .collection("Messages")
+        .orderBy("dateTime")
+        .snapshots()
+        .listen((event) {
+      messages = [];
+      event.docs.forEach((element) {
+        messages!.add(MessageModel.fromJson(element.data()));
+      });
+      emit(GetMessageSuccessState());
+      print("GetMessageSuccessState");
+    });
+  }
 }

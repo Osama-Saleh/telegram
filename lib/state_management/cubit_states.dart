@@ -36,3 +36,5 @@ class SendMessageLoadingState extends HomeStates {}
 class SendMessageSuccessState extends HomeStates {}
 
 class SendMessageErrorState extends HomeStates {}
+
+class GetMessageSuccessState extends HomeStates {}
