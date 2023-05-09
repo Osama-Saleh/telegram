@@ -6,7 +6,7 @@ import 'package:flutter/src/widgets/framework.dart';
 
 import 'package:sizer/sizer.dart';
 import 'package:telegram/components/app_colors.dart';
-import 'package:telegram/view/home_view.dart';
+import 'package:telegram/home/home_view.dart';
 import 'package:telegram/widgets/my_divider.dart';
 import 'package:telegram/widgets/my_drawer_items.dart';
 import 'package:telegram/widgets/my_icon_button.dart';

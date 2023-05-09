@@ -3,13 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
-import 'package:telegram/Module/user_model.dart';
 import 'package:telegram/Module/user_model_fire.dart';
+import 'package:telegram/chatting/chatting_view.dart';
 import 'package:telegram/components/app_colors.dart';
-import 'package:telegram/controller/user_controller.dart';
-import 'package:telegram/state_management/cubit_states.dart';
-import 'package:telegram/state_management/home_cubit.dart';
-import 'package:telegram/view/chatting_view.dart';
+import 'package:telegram/user/cubit/user_cubit.dart';
+// import 'package:telegram/view/chatting_view.dart';
 import 'package:telegram/widgets/my_divider.dart';
 import 'package:telegram/widgets/my_text.dart';
 
@@ -25,23 +23,18 @@ class BuildItemsUser extends StatelessWidget {
   // final String? name;
   @override
   Widget build(BuildContext context) {
-    var cubit = HomeCubit.get(context);
-    return BlocConsumer<HomeCubit, HomeStates>(
+    return BlocConsumer<UserCubit, UserState>(
       listener: (context, state) {},
       builder: (context, state) {
         return Container(
-          height: 17.8.h,
+          height: 18.h,
           child: Column(
             children: [
               Container(
                 width: double.infinity,
                 child: InkWell(
                   onTap: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChattingView(model: model!),
-                        ));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChattingView(model: model ) ,));
                   },
                   child: Row(
                     children: [
@@ -57,20 +50,19 @@ class BuildItemsUser extends StatelessWidget {
                           color: Colors.blue,
                           shape: BoxShape.circle,
                         ),
-                        child: cubit.userModel != null
+                        child: model!.image == null
                             ? Center(
                                 child: MyText(
                                   text:
                                       "${model!.name![0].toUpperCase()}${model!.name![1].toUpperCase()}",
                                   color: AppColor.white,
                                   fontSize: 10.sp,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               )
                             : Image(
                                 image: NetworkImage("${model!.image}"),
                                 fit: BoxFit.cover,
-                                height: 15.h,
-                                width: 15.w,
                               ),
                       ),
                       //*================================================================

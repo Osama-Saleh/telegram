@@ -5,9 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sizer/sizer.dart';
 import 'package:telegram/components/app_colors.dart';
+import 'package:telegram/register/cubit/register_cubit.dart';
 import 'package:telegram/state_management/cubit_states.dart';
 import 'package:telegram/state_management/home_cubit.dart';
-import 'package:telegram/view/login.view.dart';
+import 'package:telegram/login/login.view.dart';
 import 'package:telegram/widgets/my_elevated_button.dart';
 import 'package:telegram/widgets/my_show_model.dart';
 import 'package:telegram/widgets/my_text.dart';
@@ -31,8 +32,8 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
-    var cubit = HomeCubit.get(context);
-    return BlocConsumer<HomeCubit, HomeStates>(
+    var cubit = RegisterCubit.get(context);
+    return BlocConsumer<RegisterCubit, RegisterState>(
       listener: (context, state) {
         if (state is RegisterSuccessState) {
           Fluttertoast.showToast(
@@ -136,11 +137,12 @@ class _RegisterViewState extends State<RegisterView> {
                       obscureText: cubit.showPassword,
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10)),
-                      suffixIcon: IconButton(
+                      suffixIcon: IconButton(  
                           onPressed: () {
                             cubit.changePasswordVisibility();
                           },
-                          icon: Icon(cubit.suffix)),
+                          icon: Icon(cubit.suffix)
+                          ),
                       validator: (value) {
                         if (value!.isEmpty) {
                           return "faild";

@@ -5,36 +5,48 @@ class HomeInitState extends HomeStates {}
 
 class ChangeNameState extends HomeStates {}
 
-class ShowPasswordState extends HomeStates {}
+// class ShowPasswordState extends HomeStates {}
 
-class RegisterSuccessState extends HomeStates {}
+// class RegisterSuccessState extends HomeStates {}
 
-class RegisterErrorState extends HomeStates {}
+// class RegisterErrorState extends HomeStates {}
 
-class LoginSuccessState extends HomeStates {
-  final String? token;
+// class LoginSuccessState extends HomeStates {
+//   final String? token;
 
-  LoginSuccessState(this.token);
-}
+//   LoginSuccessState(this.token);
+// }
 
-class LoginErrorState extends HomeStates {}
+// class LoginErrorState extends HomeStates {}
 
-class SaveUserDataLoadingState extends HomeStates {}
+// class SaveUserDataLoadingState extends HomeStates {}
 
-class SaveUserDataSuccessState extends HomeStates {}
+// class SaveUserDataSuccessState extends HomeStates {}
 
-class SaveUserDataErrorState extends HomeStates {}
+// class SaveUserDataErrorState extends HomeStates {}
 
-class GetAllUserLoadingState extends HomeStates {}
+// class GetAllUserLoadingState extends HomeStates {}
 
-class GetAllUserSuccessState extends HomeStates {}
+// class GetAllUserSuccessState extends HomeStates {}
 
-class GetAllUserErrorState extends HomeStates {}
+// class GetAllUserErrorState extends HomeStates {}
 
-class SendMessageLoadingState extends HomeStates {}
+// class SendMessageLoadingState extends HomeStates {}
 
-class SendMessageSuccessState extends HomeStates {}
+// class SendMessageSuccessState extends HomeStates {}
 
-class SendMessageErrorState extends HomeStates {}
+// class SendMessageErrorState extends HomeStates {}
 
-class GetMessageSuccessState extends HomeStates {}
+// class GetMessageSuccessState extends HomeStates {}
+
+// class SelectImageLoadingState extends HomeStates {}
+
+// class SelectImageSuccessState extends HomeStates {}
+
+// class SelectImageErrorState extends HomeStates {}
+
+// class UploadImageLoadingState extends HomeStates {}
+
+// class UploadImageSuccessState extends HomeStates {}
+
+// class UploadImageErrorState extends HomeStates {}

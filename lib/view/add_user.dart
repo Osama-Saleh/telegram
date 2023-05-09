@@ -8,7 +8,7 @@ import 'package:sizer/sizer.dart';
 import 'package:telegram/components/app_colors.dart';
 import 'package:telegram/state_management/cubit_states.dart';
 import 'package:telegram/state_management/home_cubit.dart';
-import 'package:telegram/view/home_view.dart';
+import 'package:telegram/home/home_view.dart';
 import 'package:telegram/widgets/my_app_bar.dart';
 import 'package:telegram/widgets/my_drawer_items.dart';
 

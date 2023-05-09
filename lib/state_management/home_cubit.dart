@@ -1,9 +1,13 @@
-// ignore_for_file: avoid_print, unused_local_variable, avoid_function_literals_in_foreach_calls
+// ignore_for_file: avoid_print, unused_local_variable, avoid_function_literals_in_foreach_calls, await_only_futures, unnecessary_brace_in_string_interps, avoid_init_to_null
+
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:telegram/Module/message_model.dart';
 import 'package:telegram/Module/user_model.dart';
 import 'package:telegram/Module/user_model_fire.dart';
@@ -38,211 +42,267 @@ class HomeCubit extends Cubit<HomeStates> {
     key.currentState.removeItem(index, (context, animation) {});
   }
 
-  //*=============================================
-  //?================= Show Password =============
-  //*=============================================
+  // //*=============================================
+  // //?================= Show Password =============
+  // //*=============================================
 
-  IconData suffix = Icons.visibility_off;
-  bool showPassword = true;
-  void changePasswordVisibility() {
-    showPassword = !showPassword;
-    suffix = showPassword ? Icons.visibility_off : Icons.visibility;
-    emit(ShowPasswordState());
-  }
+  // IconData suffix = Icons.visibility_off;
+  // bool showPassword = true;
+  // void changePasswordVisibility() {
+  //   showPassword = !showPassword;
+  //   suffix = showPassword ? Icons.visibility_off : Icons.visibility;
+  //   emit(ShowPasswordState());
+  // }
 
-  //*=============================================
-  //?=============== Register  user ==============
-  //*=============================================
-  Future<void> register({
-    String? name,
-    String? mail,
-    String? password,
-  }) async {
-    try {
-      final credential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-        email: mail!,
-        password: password!,
-      )
-          .then((value) {
-        saveUserDate(name: name, mail: mail, id: value.user!.uid);
-        emit(RegisterSuccessState());
-        print("RegisterSuccessState");
-      }).catchError((onError) {
-        emit(RegisterErrorState());
-        print("RegisterErrorState");
-        Fluttertoast.showToast(
-            msg: "The email address is badly formatted.",
-            toastLength: Toast.LENGTH_SHORT,
-            backgroundColor: Colors.red);
-      });
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
-        Fluttertoast.showToast(
-            msg: "The password provided is too weak.",
-            toastLength: Toast.LENGTH_SHORT,
-            backgroundColor: Colors.red);
-      } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
-        Fluttertoast.showToast(
-            msg: "The account already exists for that email.",
-            toastLength: Toast.LENGTH_SHORT,
-            backgroundColor: Colors.red);
-      }
-    } catch (e) {
-      print("error Sing Up ${e.toString()}");
-    }
-  }
+  // //*=============================================
+  // //?=============== Register  user ==============
+  // //*=============================================
+  // Future<void> register({
+  //   String? name,
+  //   String? mail,
+  //   String? password,
+  // }) async {
+  //   try {
+  //     final credential = await FirebaseAuth.instance
+  //         .createUserWithEmailAndPassword(
+  //       email: mail!,
+  //       password: password!,
+  //     )
+  //         .then((value) {
+  //       saveUserDate(name: name, mail: mail, id: value.user!.uid);
+  //       emit(RegisterSuccessState());
+  //       print("RegisterSuccessState");
+  //     }).catchError((onError) {
+  //       emit(RegisterErrorState());
+  //       print("RegisterErrorState");
+  //       Fluttertoast.showToast(
+  //           msg: "The email address is badly formatted.",
+  //           toastLength: Toast.LENGTH_SHORT,
+  //           backgroundColor: Colors.red);
+  //     });
+  //   } on FirebaseAuthException catch (e) {
+  //     if (e.code == 'weak-password') {
+  //       print('The password provided is too weak.');
+  //       Fluttertoast.showToast(
+  //           msg: "The password provided is too weak.",
+  //           toastLength: Toast.LENGTH_SHORT,
+  //           backgroundColor: Colors.red);
+  //     } else if (e.code == 'email-already-in-use') {
+  //       print('The account already exists for that email.');
+  //       Fluttertoast.showToast(
+  //           msg: "The account already exists for that email.",
+  //           toastLength: Toast.LENGTH_SHORT,
+  //           backgroundColor: Colors.red);
+  //     }
+  //   } catch (e) {
+  //     print("error Sing Up ${e.toString()}");
+  //   }
+  // }
 
-  //*=============================================
-  //?===============   Login    ================
-  //*=============================================
-  Future<void> login({
-    String? mail,
-    String? password,
-  }) async {
-    try {
-      final credential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: mail!, password: password!);
-      print("signUp : ${credential.user!.uid}");
-      emit(LoginSuccessState(credential.user!.uid));
-      print("LoginSuccessState");
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-        Fluttertoast.showToast(
-            msg: "email faild ",
-            toastLength: Toast.LENGTH_SHORT,
-            backgroundColor: Colors.red);
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
-        Fluttertoast.showToast(
-            msg: "Wrong password",
-            toastLength: Toast.LENGTH_SHORT,
-            backgroundColor: Colors.red);
-      }
-      Fluttertoast.showToast(
-          msg: "The email address is badly formatted",
-          toastLength: Toast.LENGTH_SHORT,
-          backgroundColor: Colors.red);
-      emit(LoginErrorState());
-      print("LoginErrorState");
-    }
-  }
+  // //*=============================================
+  // //?===============   Login    ================
+  // //*=============================================
+  // Future<void> login({
+  //   String? mail,
+  //   String? password,
+  // }) async {
+  //   try {
+  //     final credential = await FirebaseAuth.instance
+  //         .signInWithEmailAndPassword(email: mail!, password: password!);
+  //     print("signUp : ${credential.user!.uid}");
+  //     emit(LoginSuccessState(credential.user!.uid));
+  //     print("LoginSuccessState");
+  //   } on FirebaseAuthException catch (e) {
+  //     if (e.code == 'user-not-found') {
+  //       print('No user found for that email.');
+  //       Fluttertoast.showToast(
+  //           msg: "email faild ",
+  //           toastLength: Toast.LENGTH_SHORT,
+  //           backgroundColor: Colors.red);
+  //     } else if (e.code == 'wrong-password') {
+  //       print('Wrong password provided for that user.');
+  //       Fluttertoast.showToast(
+  //           msg: "Wrong password",
+  //           toastLength: Toast.LENGTH_SHORT,
+  //           backgroundColor: Colors.red);
+  //     }
+  //     Fluttertoast.showToast(
+  //         msg: "The email address is badly formatted",
+  //         toastLength: Toast.LENGTH_SHORT,
+  //         backgroundColor: Colors.red);
+  //     emit(LoginErrorState());
+  //     print("LoginErrorState");
+  //   }
+  // }
 
   //*=============================================
   //?========= save user data in firebase ========
   //*=============================================
-  Future<void> saveUserDate({
-    String? name,
-    String? mail,
-    String? id,
-  }) async {
-    emit(SaveUserDataLoadingState());
-    print("SaveUserDataLoadingState");
-    UserModelFire userModelFire =
-        UserModelFire(name: name, mail: mail, token: id);
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(id)
-        .set(userModelFire.toMap())
-        .then((value) {
-      emit(SaveUserDataSuccessState());
-      print("SaveUserDataSuccessState");
-    }).catchError((onError) {
-      emit(SaveUserDataErrorState());
-      print("SaveUserDataErrorState $onError");
-    });
-  }
-  //*=============================================
-  //?========= Get All user in application =======
-  //*=============================================
+  // Future<void> saveUserDate({
+  //   String? name,
+  //   String? mail,
+  //   String? id,
+  // }) async {
+  //   emit(SaveUserDataLoadingState());
+  //   print("SaveUserDataLoadingState");
+  //   UserModelFire userModelFire =
+  //       UserModelFire(name: name, mail: mail, token: id);
+  //   FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(id)
+  //       .set(userModelFire.toMap())
+  //       .then((value) {
+  //     emit(SaveUserDataSuccessState());
+  //     print("SaveUserDataSuccessState");
+  //   }).catchError((onError) {
+  //     emit(SaveUserDataErrorState());
+  //     print("SaveUserDataErrorState $onError");
+  //   });
+  // }
+  // //*=============================================
+  // //?========= Get All user in application =======
+  // //*=============================================
 
-  List<UserModelFire>? countUsers;
-  Future getAllUser() async {
-    countUsers = [];
-    emit(GetAllUserLoadingState());
-    print("GetAllUserLoadingState");
-    var value = await FirebaseFirestore.instance.collection('users').get();
-    value.docs.forEach((element) {
-      print(" element ${element.data()}");
-      if (element.data()["token"] != MyConst.uidUser) {
-        countUsers!.add(UserModelFire.fromJson(element.data()));
-        emit(GetAllUserSuccessState());
-        print("GetAllUserSuccessState");
-      }
-    });
-    print("countUsers : ${countUsers!.length}");
-  }
+  // List<UserModelFire>? countUsers;
+  // Future getAllUser() async {
+  //   countUsers = [];
+  //   emit(GetAllUserLoadingState());
+  //   print("GetAllUserLoadingState");
+  //   var value = await FirebaseFirestore.instance.collection('users').get();
+  //   value.docs.forEach((element) {
+  //     print(" element ${element.data()}");
+  //     if (element.data()["token"] != MyConst.uidUser) {
+  //       countUsers!.add(UserModelFire.fromJson(element.data()));
+  //       emit(GetAllUserSuccessState());
+  //       print("GetAllUserSuccessState");
+  //     }
+  //   });
+  //   print("countUsers : ${countUsers!.length}");
+  // }
 
-  //*=============================================
-  //?=======  save messages in firebase =========
-  //*=============================================
-  void sendMessage({
-    String? receiverId,
-    String? text,
-    String? dateTime,
-  }) {
-    MessageModel messageModel = MessageModel(
-        receiverId: receiverId,
-        text: text,
-        dateTime: dateTime,
-        senderId: MyConst.uidUser);
-    //* my chat
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(MyConst.uidUser)
-        .collection("Chats")
-        .doc(receiverId)
-        .collection("Messages")
-        .add(messageModel.toMap())
-        .then((value) {
-      emit(SendMessageSuccessState());
-      print("SendMessageSuccessState");
-    }).catchError((onError) {
-      emit(SendMessageErrorState());
-      print("SendMessageErrorState");
-    });
-    //* receiver chat
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(receiverId)
-        .collection("Chats")
-        .doc(MyConst.uidUser)
-        .collection("Messages")
-        .add(messageModel.toMap())
-        .then((value) {
-      emit(SendMessageSuccessState());
-      print("SendMessageSuccessState");
-    }).catchError((onError) {
-      emit(SendMessageErrorState());
-      print("SendMessageErrorState");
-    });
-  }
+//   //*=============================================
+//   //?=======  save messages in firebase =========
+//   //*=============================================
+//   Future<void> sendMessage({
+//     String? receiverId,
+//     String? text,
+//     String? dateTime,
+//     String? image,
+//   }) async {
+//     MessageModel messageModel = MessageModel(
+//       receiverId: receiverId,
+//       text: text,
+//       dateTime: dateTime,
+//       senderId: MyConst.uidUser,
+//       image: image,
+//     );
+//     //* my chat
+//     FirebaseFirestore.instance
+//         .collection('users')
+//         .doc(MyConst.uidUser)
+//         .collection("Chats")
+//         .doc(receiverId)
+//         .collection("Messages")
+//         .add(messageModel.toMap())
+//         .then((value) {
+//       emit(SendMessageSuccessState());
+//       print("SendMessageSuccessState");
+//     }).catchError((onError) {
+//       emit(SendMessageErrorState());
+//       print("SendMessageErrorState");
+//     });
+//     //* receiver chat
+//     FirebaseFirestore.instance
+//         .collection('users')
+//         .doc(receiverId)
+//         .collection("Chats")
+//         .doc(MyConst.uidUser)
+//         .collection("Messages")
+//         .add(messageModel.toMap())
+//         .then((value) {
+//       emit(SendMessageSuccessState());
+//       print("SendMessageSuccessState");
+//     }).catchError((onError) {
+//       emit(SendMessageErrorState());
+//       print("SendMessageErrorState");
+//     });
+//   }
 
-  //*==============================================================
-  //?=======  get messages from firebase to message model =========
-  //*==============================================================
-  List<MessageModel>? messages;
-  void getMessage({
-    String? receiverId,
-  }) {
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(MyConst.uidUser)
-        .collection("Chats")
-        .doc(receiverId)
-        .collection("Messages")
-        .orderBy("dateTime")
-        .snapshots()
-        .listen((event) {
-      messages = [];
-      event.docs.forEach((element) {
-        messages!.add(MessageModel.fromJson(element.data()));
-      });
-      emit(GetMessageSuccessState());
-      print("GetMessageSuccessState");
-    });
-  }
+//   //*==============================================================
+//   //*      get messages from firebase to message model
+//   //*==============================================================
+//   List<MessageModel>? messages;
+//   Future<void> getMessage({
+//     String? receiverId,
+//   }) async {
+//     await FirebaseFirestore.instance
+//         .collection('users')
+//         .doc(MyConst.uidUser)
+//         .collection("Chats")
+//         .doc(receiverId)
+//         .collection("Messages")
+//         .orderBy("dateTime")
+//         .snapshots()
+//         .listen((event) {
+//       messages = [];
+//       event.docs.forEach((element) {
+//         messages!.add(MessageModel.fromJson(element.data()));
+//       });
+//       emit(GetMessageSuccessState());
+//       print("GetMessageSuccessState");
+//     });
+//   }
+
+// //*=======================================================================
+// //*                      get image from device
+// //*=======================================================================
+//   File? selectImage = null;
+//   ImagePicker sendpicker = ImagePicker();
+
+//   Future getsendImage(
+//       // {
+//       // @required String? name,
+//       // @required String? bio,
+//       // @required String? phone,
+//       // }
+//       ) async {
+//     emit(SelectImageLoadingState());
+//     print("SelectImageLoadingState");
+//     final imagefile = await sendpicker.pickImage(source: ImageSource.gallery);
+
+//     if (imagefile != null) {
+//       selectImage = File(imagefile.path);
+//       print("image Path is : ${selectImage}");
+//       // uploadImage();
+//       emit(SelectImageSuccessState());
+//       print("SelectImageSuccessState");
+//     } else {
+//       // print("Not Image Selected");
+//       emit(SelectImageErrorState());
+//       print("SelectImageErrorState");
+//     }
+//   }
+
+//   Future<void> uploadImage() async {
+//     emit(UploadImageLoadingState());
+//     print("UploadImageLoadingState");
+//     FirebaseStorage.instance
+//         .ref("images/${Uri.file(selectImage!.path).pathSegments.last}")
+//         .putFile(selectImage!)
+//         .then((value) {
+//       value.ref.getDownloadURL().then((value) {
+//         sendMessage(
+//           image: value
+//         );
+//         emit(UploadImageSuccessState());
+//         print("UploadImageSuccessState");
+//       }).catchError((onError) {
+//         emit(UploadImageErrorState());
+//         print("UploadImageErrorState : $onError");
+//       });
+//     }).catchError((onError) {
+//       emit(UploadImageErrorState());
+//       print("UploadImageErrorState : $onError");
+//     });
+//   }
 }

@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:telegram/Module/user_model.dart';
 import 'package:telegram/components/app_colors.dart';
+import 'package:telegram/user/user_view.dart';
 import 'package:telegram/view/add_user.dart';
 import 'package:telegram/view/chat_view.dart';
 import 'package:telegram/widgets/my_show_model.dart';
+import 'package:telegram/widgets/my_text.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -31,6 +33,7 @@ class _HomeViewState extends State<HomeView> {
         physics: const NeverScrollableScrollPhysics(),
         onPageChanged: (value) {
           if (value == 1) {
+            print(value);
             setState(() {
               isLast = true;
             });
@@ -39,15 +42,16 @@ class _HomeViewState extends State<HomeView> {
               isLast = false;
             });
           }
+          print(isLast);
         },
-        children: [ChatView(),const AddUser()],
+        children: [UserView(), const AddUser()],
       ),
       //*=============================================
       //* Floating Action Button
       //*=============================================
       floatingActionButton: Container(
-        height: 16.h,
-        width: 16.w,
+        height: 9.h,
+        width: 12.w,
         child: FloatingActionButton(
             backgroundColor: AppColor.darkBlue,
             onPressed: () {
@@ -59,6 +63,7 @@ class _HomeViewState extends State<HomeView> {
                 myShowModealBottomSheet(context);
               }
             },
+            shape: const BeveledRectangleBorder(),
             child: isLast == true
                 ? Icon(
                     Icons.person_add_alt_1,
@@ -72,4 +77,3 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 }
-
