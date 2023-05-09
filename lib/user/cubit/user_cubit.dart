@@ -17,18 +17,18 @@ class UserCubit extends Cubit<UserState> {
 
   List<UserModelFire>? countUsers;
   Future getAllUser() async {
-    countUsers = [];
     emit(GetAllUserLoadingState());
     print("GetAllUserLoadingState");
+    countUsers = [];
     var value = await FirebaseFirestore.instance.collection('users').get();
     value.docs.forEach((element) {
       print(" element ${element.data()}");
       if (element.data()["token"] != MyConst.uidUser) {
         countUsers!.add(UserModelFire.fromJson(element.data()));
-        emit(GetAllUserSuccessState());
-        print("GetAllUserSuccessState");
       }
+      emit(GetAllUserSuccessState());
+      print("GetAllUserSuccessState");
+      print("countUsers : ${countUsers!.length}");
     });
-    print("countUsers : ${countUsers!.length}");
   }
 }
