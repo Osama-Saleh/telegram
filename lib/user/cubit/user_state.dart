@@ -9,3 +9,5 @@ class GetAllUserLoadingState extends UserState {}
 class GetAllUserSuccessState extends UserState {}
 
 class GetAllUserErrorState extends UserState {}
+
+class GetMessageSuccessState extends UserState {}

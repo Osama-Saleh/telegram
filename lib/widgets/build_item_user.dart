@@ -34,7 +34,11 @@ class BuildItemsUser extends StatelessWidget {
                 width: double.infinity,
                 child: InkWell(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChattingView(model: model ) ,));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChattingView(model: model),
+                        ));
                   },
                   child: Row(
                     children: [

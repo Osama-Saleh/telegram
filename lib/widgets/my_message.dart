@@ -51,11 +51,13 @@ class MyMessage extends StatelessWidget {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return AlertDialog(
-                              content: PhotoView(
-                                
-                                imageProvider:
-                                    NetworkImage("${messageModel!.image}"),
+                            return Container(
+                              
+                              child: AlertDialog(
+                                content: PhotoView(
+                                  imageProvider:
+                                      NetworkImage("${messageModel!.image}"),
+                                ),
                               ),
                             );
                           },
@@ -72,3 +74,5 @@ class MyMessage extends StatelessWidget {
     );
   }
 }
+
+

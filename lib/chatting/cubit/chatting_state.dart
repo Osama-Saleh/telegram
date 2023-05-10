@@ -5,6 +5,9 @@ abstract class ChattingState {}
 
 class ChattingInitial extends ChattingState {}
 
+class PressEmojiState extends ChattingState {}
+class ChangekeyboardTypeState extends ChattingState {}
+
 class SendMessageLoadingState extends ChattingState {}
 
 class SendMessageSuccessState extends ChattingState {}

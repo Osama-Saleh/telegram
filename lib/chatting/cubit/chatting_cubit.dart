@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:telegram/Module/message_model.dart';
@@ -15,6 +16,13 @@ class ChattingCubit extends Cubit<ChattingState> {
   ChattingCubit() : super(ChattingInitial());
 
   static ChattingCubit get(context) => BlocProvider.of(context);
+
+  bool isEmojiSelected = false;
+  void selectEmoji() {
+    isEmojiSelected = !isEmojiSelected;
+    emit(PressEmojiState());
+    print("PressEmojiState");
+  }
 
   //*=============================================
   //?=======  save messages in firebase =========

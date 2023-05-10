@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
       BlocProvider(create: (context) => RegisterCubit(),),
       // BlocListener(listener: (context, state) => HomevCubit()..getMessage(),),
       BlocProvider(create: (context) => UserCubit()..getAllUser(),),
-      BlocProvider(create: (context) => ChattingCubit(),),
+      BlocProvider(create: (context) => ChattingCubit()..getMessage(),),
       // BlocProvider(create: (context) => HomeCubit(),),
     ], child: Sizer(
             builder: (context, orientation, deviceType) {

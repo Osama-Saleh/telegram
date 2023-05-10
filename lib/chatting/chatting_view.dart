@@ -1,20 +1,25 @@
-// ignore_for_file: must_be_immutable, prefer_const_constructors_in_immutables, prefer_is_empty, avoid_print
+// ignore_for_file: must_be_immutable, prefer_const_constructors_in_immutables, prefer_is_empty, avoid_print, sized_box_for_whitespace
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import 'package:telegram/Module/user_model_fire.dart';
 import 'package:telegram/chatting/cubit/chatting_cubit.dart';
+import 'package:telegram/chatting/widgets/emoji.dart';
 import 'package:telegram/components/app_colors.dart';
 import 'package:telegram/components/const.dart';
 import 'package:telegram/state_management/home_cubit.dart';
 import 'package:telegram/home/home_view.dart';
+import 'package:telegram/widgets/my_elevated_button.dart';
 import 'package:telegram/widgets/my_icon_button.dart';
 import 'package:telegram/widgets/my_message.dart';
 import 'package:telegram/widgets/my_text.dart';
 import 'package:telegram/widgets/receive_message.dart';
 import 'package:flutter/foundation.dart' as foundation;
+import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 
 class ChattingView extends StatefulWidget {
   ChattingView({super.key, this.model});
@@ -28,8 +33,12 @@ class _ChattingState extends State<ChattingView> {
   TextEditingController messageController = TextEditingController();
   ScrollController scrollController = ScrollController();
   var formKey = GlobalKey<FormState>();
-  bool emojiShowing = false;
-
+  bool isMice = false;
+  //!==============================================
+  FlutterSoundRecorder? myRecord;
+  final audioPlayer = AssetsAudioPlayer();
+  String? filePath;
+  bool? play = false;
   // @override
   // void initState() {
   //   super.initState();
@@ -40,11 +49,11 @@ class _ChattingState extends State<ChattingView> {
   //     });
   //   }
   // }
-  @override
-  void dispose() {
-    messageController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   messageController.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +110,7 @@ class _ChattingState extends State<ChattingView> {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => HomeView(),
+                            builder: (context) => const HomeView(),
                           ));
                     },
                     icon: Icons.arrow_back,
@@ -115,7 +124,7 @@ class _ChattingState extends State<ChattingView> {
                     //*=========================================================
                     Expanded(
                         // flex: 10,
-                        child: false
+                        child: cubit.messages!.isEmpty
                             ? Center(
                                 child: MyText(
                                   text: "Say Hello 👋",
@@ -156,78 +165,126 @@ class _ChattingState extends State<ChattingView> {
                           children: [
                             Expanded(
                               child: TextFormField(
-                                controller: messageController,
-                                keyboardType: TextInputType.multiline,
-                                minLines: 1,
-                                maxLines: 5,
-                                decoration: InputDecoration(
-                                  labelStyle: TextStyle(fontSize: 15.sp),
-                                  hintText: "Message",
-                                  hintStyle: TextStyle(fontSize: 15.sp),
-                                  prefixIcon: IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          emojiShowing = !emojiShowing;
-                                        });
+                                  controller: messageController,
+                                  minLines: 1,
+                                  maxLines: 5,
+                                  onTap: () {
+                                    setState(() {
+                                      cubit.isEmojiSelected = false;
+                                    });
+                                  },
+                                  onChanged: (value) {
+                                    setState(() {
+                                      messageController.text;
+                                    });
+                                  },
+                                  decoration: InputDecoration(
+                                    labelStyle: TextStyle(fontSize: 15.sp),
+                                    hintText: "Message",
+                                    hintStyle: TextStyle(fontSize: 15.sp),
+                                    prefixIcon: IconButton(
+                                        onPressed: () {
+                                          cubit.selectEmoji();
 
-                                        print("emoji");
-                                      },
-                                      icon: const Icon(
-                                          Icons.emoji_emotions_outlined)),
-                                  border: InputBorder.none,
-                                  contentPadding: EdgeInsets.all(3.h),
-                                ),
-                              ),
+                                          //*===========================================
+                                          //* hide keyboardType when click in emoji icon
+                                          //*===========================================
+                                          SystemChannels.textInput
+                                              .invokeMethod("TextInput.hide");
+                                          print(
+                                              "isEmoji ${cubit.isEmojiSelected}");
+                                        },
+                                        icon: const Icon(
+                                            Icons.emoji_emotions_outlined)),
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.all(3.h),
+                                  ),
+                                  keyboardType: TextInputType.multiline),
                             ),
                             MyIconButton(
-                              onPressed:
-                                  // messageController.text
-                                  //         .trimLeft()
-                                  //         .isEmpty
-                                  false
-                                      ? null
-                                      : () {
-                                          cubit
-                                              .sendMessage(
-                                                  receiverId:
-                                                      widget.model!.token,
-                                                  dateTime:
-                                                      DateTime.now().toString(),
-                                                  text: messageController.text,
-                                                  image: cubit.selectImage
-                                                      .toString())
-                                              .whenComplete(() {
-                                            if (cubit.messages != null) {
-                                              Future.delayed(
-                                                const Duration(
-                                                    milliseconds: 1000),
-                                                () {
-                                                  scrollController.animateTo(
-                                                      scrollController.position
-                                                          .maxScrollExtent,
-                                                      duration: const Duration(
-                                                          milliseconds: 100),
-                                                      curve: Curves.easeIn);
-                                                },
-                                              );
-                                              print("MaxScroll");
-                                            }
-                                            messageController.text = " ";
-                                          });
-                                        },
+                              onPressed: messageController.text.trim().isEmpty
+                                  ? null
+                                  : () {
+                                      print(
+                                          "messageController : ${messageController.text}");
+                                      cubit
+                                          .sendMessage(
+                                              receiverId: widget.model!.token,
+                                              dateTime:
+                                                  DateTime.now().toString(),
+                                              text: messageController.text,
+                                              image:
+                                                  cubit.selectImage.toString())
+                                          .whenComplete(() {
+                                        if (cubit.messages != null) {
+                                          Future.delayed(
+                                            const Duration(milliseconds: 1000),
+                                            () {
+                                              scrollController.animateTo(
+                                                  scrollController
+                                                      .position.maxScrollExtent,
+                                                  duration: const Duration(
+                                                      milliseconds: 100),
+                                                  curve: Curves.easeIn);
+                                            },
+                                          );
+                                          print("MaxScroll");
+                                        }
+                                        messageController.text = " ";
+                                      });
+                                    },
                               icon: Icons.send,
                             ),
-                            MyIconButton(
-                              icon: Icons.photo_camera_outlined,
-                              onPressed: () {
-                                cubit.setSelectImage(
-                                    receiverId: widget.model!.token);
+                            // MyElevatedButton(
+                            //   onPressed: () {
+                            //     cubit.setSelectImage(
+                            //         receiverId: widget.model!.token);
+                            //   },
+
+                            // ),
+                            // ElevatedButton(onPressed: (){}, child: Icon(Icons.image_outlined)),
+
+                            InkWell(
+                              onLongPress: () async {
+                                if (isMice) {
+                                  
+                                  print("long");
+                                } else {
+                                  cubit.setSelectImage(
+                                      receiverId: widget.model!.token);
+                                }
                               },
+                              child: MyIconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    isMice = !isMice;
+                                  });
+                                },
+                                icon: isMice
+                                    ? Icons.mic_none_rounded
+                                    : Icons.image_outlined,
+                              ),
                             )
                           ],
                         ),
                       ),
-                    )
+                    ),
+                    //*
+                    if (cubit.isEmojiSelected == true)
+                      Expanded(
+                        child: Container(
+                          height: 50.h,
+                          width: double.infinity,
+                          child: EmojiPicker(
+                            textEditingController: messageController,
+                            onEmojiSelected: (category, emoji) {
+                              setState(() {
+                                messageController;
+                              });
+                            },
+                          ),
+                        ),
+                      )
                     // Container(
                     //   height: 10.h,
                     //   width: double.infinity,

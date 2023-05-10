@@ -2,6 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:telegram/Module/message_model.dart';
 import 'package:telegram/Module/user_model_fire.dart';
 import 'package:telegram/components/const.dart';
 
@@ -25,10 +26,38 @@ class UserCubit extends Cubit<UserState> {
       print(" element ${element.data()}");
       if (element.data()["token"] != MyConst.uidUser) {
         countUsers!.add(UserModelFire.fromJson(element.data()));
+        emit(GetAllUserSuccessState());
+        print("GetAllUserSuccessState");
       }
-      emit(GetAllUserSuccessState());
-      print("GetAllUserSuccessState");
-      print("countUsers : ${countUsers!.length}");
+    });
+    print("countUsers : ${countUsers!.length}");
+  }
+
+//*==============================================================
+  //*      get messages from firebase to message model
+  //*==============================================================
+  List<MessageModel>? messages;
+  Future<void> getMessage({
+    String? receiverId,
+  }) async {
+    print("osos");
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(MyConst.uidUser)
+        .collection("Chats")
+        .doc(receiverId)
+        .collection("Messages")
+        .orderBy("dateTime")
+        .snapshots()
+        .listen((event) {
+      messages = [];
+      print("lalala");
+      event.docs.forEach((element) {
+        messages!.add(MessageModel.fromJson(element.data()));
+      });
+      print("messages ${messages!.length}");
+      emit(GetMessageSuccessState());
+      print("GetMessageSuccessState");
     });
   }
 }

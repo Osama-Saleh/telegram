@@ -51,6 +51,12 @@ dependencies:
   firebase_storage: ^11.1.2
   photo_view: ^0.14.0
   emoji_picker_flutter: ^1.5.4
+  # =====================
+  # voice record
+  # =====================
+  flutter_sound: ^9.2.13
+  assets_audio_player: ^3.0.6
+  # =====================
 
 dev_dependencies:
   flutter_test:

@@ -7,15 +7,19 @@ class MyElevatedButton extends StatelessWidget {
     super.key,
     this.text,
     this.onPressed,
+    this.onLongPress,
     this.border
   });
   final String? text;
   final Function()? onPressed;
+  final Function()? onLongPress;
    double? border;
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
+      
         onPressed: onPressed,
+        onLongPress: onLongPress,
         style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(border??0),
