@@ -1,10 +1,10 @@
-import 'package:bloc/bloc.dart';
+// ignore_for_file: unused_local_variable, avoid_print
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:meta/meta.dart';
 import 'package:telegram/Module/user_model_fire.dart';
 
 part 'register_state.dart';

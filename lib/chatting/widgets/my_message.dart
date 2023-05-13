@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable, avoid_unnecessary_containers, avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:sizer/sizer.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
+
 import 'package:telegram/components/app_colors.dart';
 
 class MyDivider extends StatelessWidget {

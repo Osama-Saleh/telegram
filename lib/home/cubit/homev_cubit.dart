@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages, unnecessary_import, avoid_print
+
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,7 +22,7 @@ class HomevCubit extends Cubit<HomevState> {
     String? receiverId,
   }) async {
     print("hahahah");
-    await FirebaseFirestore.instance
+    FirebaseFirestore.instance
         .collection('users')
         .doc(MyConst.uidUser)
         .collection("Chats")
@@ -31,9 +33,9 @@ class HomevCubit extends Cubit<HomevState> {
         .listen((event) {
       messages = [];
       print("lalala");
-      event.docs.forEach((element) {
+      for (var element in event.docs) {
         messages!.add(MessageModel.fromJson(element.data()));
-      });
+      }
       emit(GetMessageSuccessState());
       print("GetMessageSuccessState");
     });

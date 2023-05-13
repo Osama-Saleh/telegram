@@ -1,26 +1,18 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import 'package:telegram/components/app_colors.dart';
-import 'package:telegram/state_management/cubit_states.dart';
-import 'package:telegram/state_management/home_cubit.dart';
 import 'package:telegram/home/home_view.dart';
+import 'package:telegram/user/cubit/widgets/my_drawer_items.dart';
 import 'package:telegram/widgets/my_app_bar.dart';
-import 'package:telegram/widgets/my_drawer_items.dart';
 
 class AddUser extends StatelessWidget {
   const AddUser({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<HomeCubit, HomeStates>(
-      listener: (context, state) {},
-      builder: (context, state) {
-        return Scaffold(
+    return Scaffold(
           appBar: MyAppBar(
             title: "New Messge",
             icon1: Icons.search,
@@ -75,7 +67,5 @@ class AddUser extends StatelessWidget {
             ),
           ),
         );
-      },
-    );
   }
 }

@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, unnecessary_import, implementation_imports
+// ignore_for_file: file_names, unnecessary_import, implementation_imports, prefer_const_constructors_in_immutables
 
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -6,8 +6,8 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:sizer/sizer.dart';
 import 'package:telegram/components/app_colors.dart';
 import 'package:telegram/home/home_view.dart';
+import 'package:telegram/user/cubit/widgets/my_drawer_items.dart';
 import 'package:telegram/widgets/my_divider.dart';
-import 'package:telegram/widgets/my_drawer_items.dart';
 import 'package:telegram/widgets/my_icon_button.dart';
 import 'package:telegram/widgets/my_text.dart';
 
@@ -24,7 +24,6 @@ class _SettingViewState extends State<SettingView> {
   late ScrollController scrollController;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     scrollController = ScrollController();
     scrollController.addListener(() {
@@ -60,9 +59,9 @@ class _SettingViewState extends State<SettingView> {
                           // crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             AnimatedOpacity(
-                              duration: Duration(milliseconds: 300),
+                              duration:const Duration(milliseconds: 300),
                               opacity: top <= 130 ? 1.0 : 0.0,
-                              child: CircleAvatar(
+                              child:const CircleAvatar(
                                 backgroundImage: NetworkImage("https://img.freepik.com/free-photo/smiley-little-boy-isolated-pink_23-2148984798.jpg"),
                               ),
                             ),
@@ -73,7 +72,7 @@ class _SettingViewState extends State<SettingView> {
                           ],
                         ),
                         centerTitle: false,
-                        background: Image(
+                        background:const Image(
                             fit: BoxFit.cover,
                             image: NetworkImage(
                                 "https://img.freepik.com/free-photo/smiley-little-boy-isolated-pink_23-2148984798.jpg")),
@@ -85,7 +84,7 @@ class _SettingViewState extends State<SettingView> {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => HomeView(),
+                            builder: (context) =>const HomeView(),
                           ));
                     },
                     icon: Icons.arrow_back,
@@ -347,9 +346,9 @@ class _SettingViewState extends State<SettingView> {
   }
 
   Positioned buildFAB() {
-    final double defaultMargin = 195;
-    final double defaultStart = 230;
-    final double defaultEnd = defaultStart / 2;
+    const double defaultMargin = 195;
+    const double defaultStart = 230;
+    const double defaultEnd = defaultStart / 2;
 
     double top = defaultMargin;
     double scale = 1.0;
@@ -371,7 +370,7 @@ class _SettingViewState extends State<SettingView> {
         transform: Matrix4.identity()..scale(scale),
         child: FloatingActionButton(
           onPressed: () {},
-          child: Icon(Icons.photo_camera),
+          child: const Icon(Icons.photo_camera),
         ),
       ),
     );

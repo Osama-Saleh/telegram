@@ -122,7 +122,7 @@ class BuildItemsUser extends StatelessWidget {
                   ),
                 ),
               ),
-              MyDivider()
+            const   MyDivider()
             ],
           ),
         );

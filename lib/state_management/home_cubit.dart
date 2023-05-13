@@ -1,20 +1,10 @@
 // ignore_for_file: avoid_print, unused_local_variable, avoid_function_literals_in_foreach_calls, await_only_futures, unnecessary_brace_in_string_interps, avoid_init_to_null
 
-import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:telegram/Module/message_model.dart';
 import 'package:telegram/Module/user_model.dart';
-import 'package:telegram/Module/user_model_fire.dart';
-import 'package:telegram/components/const.dart';
 import 'package:telegram/controller/user_controller.dart';
 import 'package:telegram/state_management/cubit_states.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class HomeCubit extends Cubit<HomeStates> {
   HomeCubit() : super(HomeInitState());

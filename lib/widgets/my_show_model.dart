@@ -1,3 +1,5 @@
+// ignore_for_file: sized_box_for_whitespace, avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:telegram/components/app_colors.dart';

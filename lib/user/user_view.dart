@@ -1,12 +1,12 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, prefer_is_empty
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import 'package:telegram/user/cubit/user_cubit.dart';
-import 'package:telegram/widgets/build_item_user.dart';
+import 'package:telegram/user/cubit/widgets/build_item_user.dart';
+import 'package:telegram/user/cubit/widgets/my_drawer.dart';
 import 'package:telegram/widgets/my_app_bar.dart';
-import 'package:telegram/widgets/my_drawer.dart';
 import 'package:telegram/widgets/my_show_model.dart';
 import 'package:telegram/widgets/my_text.dart';
 

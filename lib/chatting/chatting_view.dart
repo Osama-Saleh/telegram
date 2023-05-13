@@ -7,17 +7,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import 'package:telegram/Module/user_model_fire.dart';
 import 'package:telegram/chatting/cubit/chatting_cubit.dart';
-import 'package:telegram/chatting/widgets/emoji.dart';
+import 'package:telegram/chatting/widgets/my_message.dart';
+import 'package:telegram/chatting/widgets/receive_message.dart';
 import 'package:telegram/components/app_colors.dart';
 import 'package:telegram/components/const.dart';
-import 'package:telegram/state_management/home_cubit.dart';
 import 'package:telegram/home/home_view.dart';
-import 'package:telegram/widgets/my_elevated_button.dart';
 import 'package:telegram/widgets/my_icon_button.dart';
-import 'package:telegram/widgets/my_message.dart';
 import 'package:telegram/widgets/my_text.dart';
-import 'package:telegram/widgets/receive_message.dart';
-import 'package:flutter/foundation.dart' as foundation;
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 
@@ -39,6 +35,13 @@ class _ChattingState extends State<ChattingView> {
   final audioPlayer = AssetsAudioPlayer();
   String? filePath;
   bool? play = false;
+  String? recordText = "00:00:00";
+
+  void startIt() async {
+    filePath = "/sdcard/Download/temp.wav";
+    myRecord = FlutterSoundRecorder();
+    // await myRecord.openRecorder();
+  }
   // @override
   // void initState() {
   //   super.initState();
@@ -247,7 +250,6 @@ class _ChattingState extends State<ChattingView> {
                             InkWell(
                               onLongPress: () async {
                                 if (isMice) {
-                                  
                                   print("long");
                                 } else {
                                   cubit.setSelectImage(

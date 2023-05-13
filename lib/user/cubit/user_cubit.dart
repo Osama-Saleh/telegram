@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, avoid_function_literals_in_foreach_calls
+// ignore_for_file: avoid_print, avoid_function_literals_in_foreach_calls, await_only_futures
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

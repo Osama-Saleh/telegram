@@ -6,16 +6,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sizer/sizer.dart';
 import 'package:telegram/components/app_colors.dart';
 import 'package:telegram/register/cubit/register_cubit.dart';
-import 'package:telegram/state_management/cubit_states.dart';
-import 'package:telegram/state_management/home_cubit.dart';
 import 'package:telegram/login/login.view.dart';
 import 'package:telegram/widgets/my_elevated_button.dart';
-import 'package:telegram/widgets/my_show_model.dart';
 import 'package:telegram/widgets/my_text.dart';
 import 'package:telegram/widgets/my_text_form_field.dart';
 
 class RegisterView extends StatefulWidget {
-  RegisterView({super.key});
+  const RegisterView({super.key});
 
   @override
   State<RegisterView> createState() => _RegisterViewState();

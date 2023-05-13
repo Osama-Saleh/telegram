@@ -1,10 +1,10 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, sized_box_for_whitespace
 
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:telegram/components/app_colors.dart';
+import 'package:telegram/user/cubit/widgets/my_drawer_items.dart';
 import 'package:telegram/view/Setting_view.dart';
-import 'package:telegram/widgets/my_drawer_items.dart';
 import 'package:telegram/widgets/my_text.dart';
 
 class MyDrawer extends StatelessWidget {

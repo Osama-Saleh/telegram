@@ -1,4 +1,4 @@
-// ignore_for_file: sized_box_for_whitespace
+// ignore_for_file: sized_box_for_whitespace, avoid_print
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,8 +9,6 @@ import 'package:telegram/components/app_colors.dart';
 import 'package:telegram/components/const.dart';
 import 'package:telegram/controller/local_storage/hive.dart';
 import 'package:telegram/login/cubit/login_cubit.dart';
-import 'package:telegram/state_management/cubit_states.dart';
-import 'package:telegram/state_management/home_cubit.dart';
 import 'package:telegram/home/home_view.dart';
 import 'package:telegram/widgets/my_elevated_button.dart';
 import 'package:telegram/widgets/my_text.dart';
@@ -46,7 +44,7 @@ class _LoginViewState extends State<LoginView> {
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => HomeView(),
+                  builder: (context) =>const HomeView(),
                 ));
             print(
                 "haha 1 : ${MyConst.uidUser} hahah 2 ${HiveHelper.getData(key: "userToken")}");
