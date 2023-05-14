@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
-import 'package:telegram/widgets/my_text.dart';
+import 'package:telegram/components/widgets/my_text.dart';
 
 class MyElevatedButton extends StatelessWidget {
    MyElevatedButton({

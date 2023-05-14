@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:telegram/Module/message_model.dart';
-import 'package:telegram/widgets/my_text.dart';
+import 'package:telegram/components/widgets/my_text.dart';
 
 class ReceiveMessage extends StatelessWidget {
   ReceiveMessage({super.key, this.messageModel});

@@ -7,9 +7,9 @@ import 'package:sizer/sizer.dart';
 import 'package:telegram/components/app_colors.dart';
 import 'package:telegram/home/home_view.dart';
 import 'package:telegram/user/cubit/widgets/my_drawer_items.dart';
-import 'package:telegram/widgets/my_divider.dart';
-import 'package:telegram/widgets/my_icon_button.dart';
-import 'package:telegram/widgets/my_text.dart';
+import 'package:telegram/components/widgets/my_divider.dart';
+import 'package:telegram/components/widgets/my_icon_button.dart';
+import 'package:telegram/components/widgets/my_text.dart';
 
 class SettingView extends StatefulWidget {
   SettingView({super.key});

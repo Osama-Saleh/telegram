@@ -8,7 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:telegram/components/app_colors.dart';
-import 'package:telegram/widgets/my_text.dart';
+import 'package:telegram/components/widgets/my_text.dart';
 
 // final String? title;
 //   final Function()? onPressed1;

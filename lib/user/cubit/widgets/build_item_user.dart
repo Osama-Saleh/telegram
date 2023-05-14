@@ -8,8 +8,8 @@ import 'package:telegram/chatting/chatting_view.dart';
 import 'package:telegram/components/app_colors.dart';
 import 'package:telegram/user/cubit/user_cubit.dart';
 // import 'package:telegram/view/chatting_view.dart';
-import 'package:telegram/widgets/my_divider.dart';
-import 'package:telegram/widgets/my_text.dart';
+import 'package:telegram/components/widgets/my_divider.dart';
+import 'package:telegram/components/widgets/my_text.dart';
 
 class BuildItemsUser extends StatelessWidget {
   const BuildItemsUser({

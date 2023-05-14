@@ -12,9 +12,8 @@ import 'package:telegram/chatting/widgets/receive_message.dart';
 import 'package:telegram/components/app_colors.dart';
 import 'package:telegram/components/const.dart';
 import 'package:telegram/home/home_view.dart';
-import 'package:telegram/widgets/my_icon_button.dart';
-import 'package:telegram/widgets/my_text.dart';
-import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:telegram/components/widgets/my_icon_button.dart';
+import 'package:telegram/components/widgets/my_text.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 
 class ChattingView extends StatefulWidget {
@@ -30,33 +29,38 @@ class _ChattingState extends State<ChattingView> {
   ScrollController scrollController = ScrollController();
   var formKey = GlobalKey<FormState>();
   bool isMice = false;
+  String? hintText = "Message";
   //!==============================================
-  FlutterSoundRecorder? myRecord;
-  final audioPlayer = AssetsAudioPlayer();
-  String? filePath;
-  bool? play = false;
-  String? recordText = "00:00:00";
+  // FlutterSoundRecorder? myRecord;
+  // final audioPlayer = AssetsAudioPlayer();
+  // String? filePath;
+  // bool? play = false;
+  // String? recordText = "00:00:00";
 
-  void startIt() async {
-    filePath = "/sdcard/Download/temp.wav";
-    myRecord = FlutterSoundRecorder();
-    // await myRecord.openRecorder();
+  // void startIt() async {
+  //   filePath = "/sdcard/Download/temp.wav";
+  //   myRecord = FlutterSoundRecorder();
+  //   // await myRecord!
+  // }
+  @override
+  void initState() {
+    super.initState();
+    ChattingCubit.get(context).initRecorder();
+    // if (ChattingCubit.get(context).messages == null) {
+    //   Future.delayed(const Duration(milliseconds: 500), () {
+    //     scrollController.animateTo(scrollController.position.maxScrollExtent,
+    //         duration: const Duration(milliseconds: 100), curve: Curves.easeIn);
+    //   });
+    // }
   }
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   if (ChattingCubit.get(context).messages == null) {
-  //     Future.delayed(const Duration(milliseconds: 500), () {
-  //       scrollController.animateTo(scrollController.position.maxScrollExtent,
-  //           duration: const Duration(milliseconds: 100), curve: Curves.easeIn);
-  //     });
-  //   }
-  // }
-  // @override
-  // void dispose() {
-  //   messageController.dispose();
-  //   super.dispose();
-  // }
+
+  @override
+  void dispose() {
+    ChattingCubit.get(context).recorder.closeRecorder();
+    print("record closed");
+    // messageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +70,10 @@ class _ChattingState extends State<ChattingView> {
         //!-----------------------------------------
         cubit.getMessage(receiverId: widget.model!.token);
         return BlocConsumer<ChattingCubit, ChattingState>(
-          listener: (context, state) {},
+          listener: (context, state) {
+            // if (state is RecordMessageSuccessState) print("object");
+            // NewWidget(cubit: cubit);
+          },
           builder: (context, state) {
             return Scaffold(
                 backgroundColor: AppColor.lightGreen,
@@ -183,22 +190,30 @@ class _ChattingState extends State<ChattingView> {
                                   },
                                   decoration: InputDecoration(
                                     labelStyle: TextStyle(fontSize: 15.sp),
-                                    hintText: "Message",
+                                    hintText: "dfg",
                                     hintStyle: TextStyle(fontSize: 15.sp),
                                     prefixIcon: IconButton(
                                         onPressed: () {
-                                          cubit.selectEmoji();
+                                          if (!cubit.isRecorderReady) {
+                                            cubit.stop().whenComplete(() {
+                                              cubit.isRecorderReady = true;
+                                            });
+                                          } else {
+                                            cubit.selectEmoji();
+                                          }
 
                                           //*===========================================
                                           //* hide keyboardType when click in emoji icon
                                           //*===========================================
                                           SystemChannels.textInput
                                               .invokeMethod("TextInput.hide");
-                                          print(
-                                              "isEmoji ${cubit.isEmojiSelected}");
+                                          // print(
+                                          //     "isEmoji ${cubit.isEmojiSelected}");
                                         },
-                                        icon: const Icon(
-                                            Icons.emoji_emotions_outlined)),
+                                        icon: cubit.isRecorderReady
+                                            ? const Icon(
+                                                Icons.emoji_emotions_outlined)
+                                            : const Icon(Icons.close)),
                                     border: InputBorder.none,
                                     contentPadding: EdgeInsets.all(3.h),
                                   ),
@@ -250,7 +265,9 @@ class _ChattingState extends State<ChattingView> {
                             InkWell(
                               onLongPress: () async {
                                 if (isMice) {
+                                  cubit.record();
                                   print("long");
+                                  print("${cubit.isRecorderReady}");
                                 } else {
                                   cubit.setSelectImage(
                                       receiverId: widget.model!.token);
@@ -354,3 +371,33 @@ class _ChattingState extends State<ChattingView> {
     );
   }
 }
+
+// class NewWidget extends StatelessWidget {
+//   const NewWidget({
+//     super.key,
+//     required this.cubit,
+//   });
+
+//   final ChattingCubit cubit;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return StreamBuilder(
+//       stream: cubit.recorder.onProgress,
+//       builder: (context, snapshot) {
+//         final duraton =
+//             snapshot.hasData ? snapshot.data!.duration : Duration.zero;
+
+//         String twoDigits(int n) => n.toString().padLeft(0);
+//         final twoDigitsMinutes = twoDigits(duraton.inMinutes.remainder(60));
+//         final twoDigitsSeconds = twoDigits(duraton.inSeconds.remainder(60));
+
+//         return MyText(
+//           text: "${twoDigitsMinutes} : $twoDigitsSeconds",
+//           fontSize: 20,
+//           fontWeight: FontWeight.bold,
+//         );
+//       },
+//     );
+//   }
+// }

@@ -10,9 +10,9 @@ import 'package:telegram/components/const.dart';
 import 'package:telegram/controller/local_storage/hive.dart';
 import 'package:telegram/login/cubit/login_cubit.dart';
 import 'package:telegram/home/home_view.dart';
-import 'package:telegram/widgets/my_elevated_button.dart';
-import 'package:telegram/widgets/my_text.dart';
-import 'package:telegram/widgets/my_text_form_field.dart';
+import 'package:telegram/components/widgets/my_elevated_button.dart';
+import 'package:telegram/components/widgets/my_text.dart';
+import 'package:telegram/components/widgets/my_text_form_field.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});

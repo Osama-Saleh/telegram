@@ -5,7 +5,7 @@ import 'package:sizer/sizer.dart';
 import 'package:telegram/components/app_colors.dart';
 import 'package:telegram/home/home_view.dart';
 import 'package:telegram/user/cubit/widgets/my_drawer_items.dart';
-import 'package:telegram/widgets/my_app_bar.dart';
+import 'package:telegram/components/widgets/my_app_bar.dart';
 
 class AddUser extends StatelessWidget {
   const AddUser({super.key});

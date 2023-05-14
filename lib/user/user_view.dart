@@ -6,9 +6,9 @@ import 'package:sizer/sizer.dart';
 import 'package:telegram/user/cubit/user_cubit.dart';
 import 'package:telegram/user/cubit/widgets/build_item_user.dart';
 import 'package:telegram/user/cubit/widgets/my_drawer.dart';
-import 'package:telegram/widgets/my_app_bar.dart';
-import 'package:telegram/widgets/my_show_model.dart';
-import 'package:telegram/widgets/my_text.dart';
+import 'package:telegram/components/widgets/my_app_bar.dart';
+import 'package:telegram/components/widgets/my_show_model.dart';
+import 'package:telegram/components/widgets/my_text.dart';
 
 class UserView extends StatefulWidget {
   const UserView({super.key});

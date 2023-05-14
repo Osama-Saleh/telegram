@@ -72,9 +72,9 @@ class MyApp extends StatelessWidget {
                   ),
                   home: 
                   // DisplayImage()
-                  // widget
+                  widget
                   // SettingView()
-                  Test(),
+                  // Test(),
                   // RegisterView()
                   );
             },

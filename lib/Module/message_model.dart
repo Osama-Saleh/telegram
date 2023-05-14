@@ -1,4 +1,3 @@
-
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class MessageModel {
   String? senderId;
@@ -6,12 +5,14 @@ class MessageModel {
   String? dateTime;
   String? text;
   String? image;
+  String? record;
   MessageModel({
     this.senderId,
     this.receiverId,
     this.dateTime,
     this.text,
     this.image,
+    this.record,
   });
 
   Map<String, dynamic> toMap() {
@@ -21,6 +22,7 @@ class MessageModel {
       'dateTime': dateTime,
       'text': text,
       'image': image,
+      'record': record,
     };
   }
 
@@ -31,6 +33,7 @@ class MessageModel {
       dateTime: map['dateTime'],
       text: map['text'],
       image: map['image'],
+      record: map['record'],
     );
   }
 }

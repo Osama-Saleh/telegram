@@ -7,7 +7,7 @@ import 'package:telegram/Module/user_model.dart';
 import 'package:telegram/components/app_colors.dart';
 import 'package:telegram/user/user_view.dart';
 import 'package:telegram/view/add_user.dart';
-import 'package:telegram/widgets/my_show_model.dart';
+import 'package:telegram/components/widgets/my_show_model.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});

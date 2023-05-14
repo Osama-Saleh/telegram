@@ -27,3 +27,5 @@ class UploadImageLoadingState extends ChattingState {}
 class UploadImageSuccessState extends ChattingState {}
 
 class UploadImageErrorState extends ChattingState {}
+
+class RecordMessageSuccessState extends ChattingState {}

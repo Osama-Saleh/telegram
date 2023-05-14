@@ -5,7 +5,9 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_sound/public/flutter_sound_recorder.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:telegram/Module/message_model.dart';
 import 'package:telegram/components/const.dart';
 
@@ -31,6 +33,7 @@ class ChattingCubit extends Cubit<ChattingState> {
     String? text,
     String? dateTime,
     String? image,
+    String? record,
   }) async {
     emit(SendMessageLoadingState());
     print("SendMessageLoadingState");
@@ -40,6 +43,7 @@ class ChattingCubit extends Cubit<ChattingState> {
       dateTime: dateTime,
       senderId: MyConst.uidUser,
       image: image,
+      record: record,
     );
     //* my chat
     FirebaseFirestore.instance
@@ -155,5 +159,35 @@ class ChattingCubit extends Cubit<ChattingState> {
       emit(UploadImageErrorState());
       print("UploadImageErrorState : $onError");
     });
+  }
+
+  //*===========================================================================
+  //*                          record
+  //*===========================================================================
+  final recorder = FlutterSoundRecorder();
+  bool isRecorderReady = false;
+
+  Future initRecorder() async {
+    final status = await Permission.microphone.request();
+    if (status != PermissionStatus.granted) {
+      throw "Microphone Permission not granted";
+    }
+    await recorder.openRecorder();
+    isRecorderReady = true;
+    recorder.setSubscriptionDuration(const Duration(milliseconds: 500));
+  }
+
+  Future record() async {
+    if (!isRecorderReady) return;
+    await recorder.startRecorder(toFile: "audio${DateTime.now().millisecond}");
+    // isRecorderReady = false;
+    emit(RecordMessageSuccessState());
+  }
+
+  Future stop() async {
+    if (!isRecorderReady) return;
+    final path = await recorder.stopRecorder();
+    final audioFile = File(path!);
+    print("recording $audioFile");
   }
 }

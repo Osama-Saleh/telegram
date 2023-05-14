@@ -7,9 +7,9 @@ import 'package:sizer/sizer.dart';
 import 'package:telegram/components/app_colors.dart';
 import 'package:telegram/register/cubit/register_cubit.dart';
 import 'package:telegram/login/login.view.dart';
-import 'package:telegram/widgets/my_elevated_button.dart';
-import 'package:telegram/widgets/my_text.dart';
-import 'package:telegram/widgets/my_text_form_field.dart';
+import 'package:telegram/components/widgets/my_elevated_button.dart';
+import 'package:telegram/components/widgets/my_text.dart';
+import 'package:telegram/components/widgets/my_text_form_field.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
