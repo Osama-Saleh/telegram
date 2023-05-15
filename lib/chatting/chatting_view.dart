@@ -1,5 +1,7 @@
 // ignore_for_file: must_be_immutable, prefer_const_constructors_in_immutables, prefer_is_empty, avoid_print, sized_box_for_whitespace
 
+import 'dart:async';
+
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,6 +32,7 @@ class _ChattingState extends State<ChattingView> {
   var formKey = GlobalKey<FormState>();
   bool isMice = false;
   String? hintText = "Message";
+  int? num = 0;
   //!==============================================
   // FlutterSoundRecorder? myRecord;
   // final audioPlayer = AssetsAudioPlayer();
@@ -166,7 +169,12 @@ class _ChattingState extends State<ChattingView> {
                                     .length)),
                     //*========================================================
                     //*                 input my message
+
                     //*========================================================
+                    Container(
+                      child: Text("${cubit.minutesTime}:${cubit.secondTime}"),
+                    ),
+
                     Form(
                       key: formKey,
                       child: Container(
@@ -190,14 +198,23 @@ class _ChattingState extends State<ChattingView> {
                                   },
                                   decoration: InputDecoration(
                                     labelStyle: TextStyle(fontSize: 15.sp),
-                                    hintText: "dfg",
+                                    hintText: cubit.isChangeHintText
+                                        ? "${cubit.minutesTime}:${cubit.secondTime}"
+                                        : "Message",
                                     hintStyle: TextStyle(fontSize: 15.sp),
                                     prefixIcon: IconButton(
                                         onPressed: () {
-                                          if (!cubit.isRecorderReady) {
-                                            cubit.stop().whenComplete(() {
-                                              cubit.isRecorderReady = true;
-                                            });
+                                          //!========================================== send voice
+                                          if (cubit.isChangeHintText == true) {
+                                            // cubit
+                                            //     .stop(
+                                            //         receiverId:
+                                            //             widget.model!.token)
+                                            //     .whenComplete(() {
+                                            //   cubit.isChangeHintText = false;
+                                            //   cubit.hintText = "Message";
+                                            //   print("cubit.changeHintText");
+                                            // });
                                           } else {
                                             cubit.selectEmoji();
                                           }
@@ -210,29 +227,44 @@ class _ChattingState extends State<ChattingView> {
                                           // print(
                                           //     "isEmoji ${cubit.isEmojiSelected}");
                                         },
-                                        icon: cubit.isRecorderReady
-                                            ? const Icon(
-                                                Icons.emoji_emotions_outlined)
-                                            : const Icon(Icons.close)),
+                                        icon: cubit.isChangeHintText
+                                            ? const Icon(Icons.close)
+                                            : const Icon(
+                                                Icons.emoji_emotions_outlined)),
                                     border: InputBorder.none,
                                     contentPadding: EdgeInsets.all(3.h),
                                   ),
                                   keyboardType: TextInputType.multiline),
                             ),
                             MyIconButton(
-                              onPressed: messageController.text.trim().isEmpty
+                              onPressed: (messageController.text
+                                          .trim()
+                                          .isEmpty &&
+                                      cubit.secondTime! == 0)
                                   ? null
                                   : () {
                                       print(
                                           "messageController : ${messageController.text}");
+                                      if (cubit.isChangeHintText == true) {
+                                        cubit
+                                            .stop(
+                                                receiverId: widget.model!.token)
+                                            .whenComplete(() {
+                                          cubit.isChangeHintText = false;
+                                          cubit.hintText = "Message";
+                                          print("cubit.changeHintText");
+                                        });
+                                      }
+                                      else {
+
                                       cubit
                                           .sendMessage(
-                                              receiverId: widget.model!.token,
-                                              dateTime:
-                                                  DateTime.now().toString(),
-                                              text: messageController.text,
-                                              image:
-                                                  cubit.selectImage.toString())
+                                        receiverId: widget.model!.token,
+                                        dateTime: DateTime.now().toString(),
+                                        text: messageController.text,
+                                        // image: cubit.selectImage.toString(),
+                                        record: cubit.recordFile,
+                                      )
                                           .whenComplete(() {
                                         if (cubit.messages != null) {
                                           Future.delayed(
@@ -247,9 +279,13 @@ class _ChattingState extends State<ChattingView> {
                                             },
                                           );
                                           print("MaxScroll");
+                                          // print("MaxScroll ${cubit.messages![0].record}");
                                         }
                                         messageController.text = " ";
+                                        cubit.secondTime = 0;
+                                        cubit.minutesTime = 0;
                                       });
+                                      }
                                     },
                               icon: Icons.send,
                             ),
@@ -264,9 +300,16 @@ class _ChattingState extends State<ChattingView> {
 
                             InkWell(
                               onLongPress: () async {
-                                if (isMice) {
-                                  cubit.record();
+                                if (isMice == true) {
+                                  cubit.record().whenComplete(() {
+                                    print("Recorder");
+                                    cubit.timeRecord();
+                                    //!----------------------------------------------;
+                                  });
                                   print("long");
+                                  setState(() {});
+                                  // cubit.hintText = "${cubit.minutesTime} : ${cubit.secondTime}";
+                                  cubit.isChangeHintText = true;
                                   print("${cubit.isRecorderReady}");
                                 } else {
                                   cubit.setSelectImage(

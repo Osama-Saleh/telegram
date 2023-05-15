@@ -3,7 +3,7 @@ class MessageModel {
   String? senderId;
   String? receiverId;
   String? dateTime;
-  String? text;
+  String? text ;
   String? image;
   String? record;
   MessageModel({

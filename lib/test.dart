@@ -6,9 +6,12 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:telegram/chatting/cubit/chatting_cubit.dart';
 import 'package:telegram/components/widgets/my_text.dart';
+import 'package:telegram/state_management/home_cubit.dart';
 
 class Test extends StatefulWidget {
   const Test({super.key});
@@ -56,73 +59,87 @@ class _TestState extends State<Test> {
   }
 
   int? num = 0;
+  bool isPlay = false;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          StreamBuilder(
-            stream: recorder.onProgress,
-            builder: (context, snapshot) {
-              final duraton =
-                  snapshot.hasData ? snapshot.data!.duration : Duration.zero;
+    return BlocConsumer<ChattingCubit, ChattingState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        return Scaffold(
+            body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // StreamBuilder(
+              //   stream: recorder.onProgress,
+              //   builder: (context, snapshot) {
+              //     final duraton =
+              //         snapshot.hasData ? snapshot.data!.duration : Duration.zero;
 
-              String twoDigits(int n) => n.toString().padLeft(0);
-              final twoDigitsMinutes =
-                  twoDigits(duraton.inMinutes.remainder(60));
-              final twoDigitsSeconds =
-                  twoDigits(duraton.inSeconds.remainder(60));
+              //     String twoDigits(int n) => n.toString().padLeft(0);
+              //     final twoDigitsMinutes =
+              //         twoDigits(duraton.inMinutes.remainder(60));
+              //     final twoDigitsSeconds =
+              //         twoDigits(duraton.inSeconds.remainder(60));
 
-              return MyText(
-                text: "${twoDigitsMinutes} : $twoDigitsSeconds",
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              );
-            },
-          ),
-          ElevatedButton(
-              onPressed: () async {
-                if (recorder.isRecording) {
-                  await stop();
-                } else {
-                  await record();
-                }
-                setState(() {});
-              },
-              child: recorder.isRecording ? Icon(Icons.stop) : Icon(Icons.mic)),
-          Text("$num"),
-          InkWell(
-              onLongPress: () {
-                Timer.periodic(
-                  const Duration(seconds: 1),
-                  (Timer timer) {
-                    setState(() {
-                      num = num! + 1;
+              //     return MyText(
+              //       text: "${twoDigitsMinutes} : $twoDigitsSeconds",
+              //       fontSize: 20,
+              //       fontWeight: FontWeight.bold,
+              //     );
+              //   },
+              // ),
+              ElevatedButton(
+                  onPressed: () {
+                    ChattingCubit.get(context)
+                        .initplayer(
+                            path:
+                                "File: '/data/user/0/com.example.telegram/cache/audio237'")
+                        .whenComplete(() {
+                      if (ChattingCubit.get(context).showPlay == true) {
+                        ChattingCubit.get(context).player.pause();
+                      } else {
+                        ChattingCubit.get(context).player.play();
+                      }
+                      print("played");
                     });
-                    if (num == 60) {
-                      timer.cancel();
-                    }
                   },
-                );
-              },
-              child: Icon(Icons.ads_click))
-        ],
-      ),
-    )
-        // Center(
-        //     child: Container(
-        //   child: SocialMediaRecorder(
-        //     sendRequestFunction: (soundFile) {
-        //       // print("the current path is ${soundFile.path}");
-        //       print("Recorded");
-        //     },
-        //     encode: AudioEncoderType.AAC,
-        //   ),
-        // )),
+                  child: ChattingCubit.get(context).showPlay
+                      ? const Icon(Icons.pause)
+                      : const Icon(Icons.play_arrow)),
+              // Text("$num"),
+              // InkWell(
+              //     onLongPress: () {
+              //       Timer.periodic(
+              //         const Duration(seconds: 1),
+              //         (Timer timer) {
+              //           setState(() {
+              //             num = num! + 1;
+              //           });
+              //           if (num == 60) {
+              //             timer.cancel();
+              //           }
+              //         },
+              //       );
+              //     },
+              //     child: Icon(Icons.ads_click))
+            ],
+          ),
+        )
+            // Center(
+            //     child: Container(
+            //   child: SocialMediaRecorder(
+            //     sendRequestFunction: (soundFile) {
+            //       // print("the current path is ${soundFile.path}");
+            //       print("Recorded");
+            //     },
+            //     encode: AudioEncoderType.AAC,
+            //   ),
+            // )),
 
-        );
+            );
+      },
+    );
   }
 }
 

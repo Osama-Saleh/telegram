@@ -1,7 +1,9 @@
 // ignore_for_file: unnecessary_brace_in_string_interps, await_only_futures, avoid_print
 
+import 'dart:async';
 import 'dart:io';
 
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -84,7 +86,6 @@ class ChattingCubit extends Cubit<ChattingState> {
   Future<void> getMessage({
     String? receiverId,
   }) async {
-    print("hahahah");
     await FirebaseFirestore.instance
         .collection('users')
         .doc(MyConst.uidUser)
@@ -166,6 +167,9 @@ class ChattingCubit extends Cubit<ChattingState> {
   //*===========================================================================
   final recorder = FlutterSoundRecorder();
   bool isRecorderReady = false;
+  bool isChangeHintText = false;
+  String? hintText = "Message";
+  String? recordFile;
 
   Future initRecorder() async {
     final status = await Permission.microphone.request();
@@ -182,12 +186,90 @@ class ChattingCubit extends Cubit<ChattingState> {
     await recorder.startRecorder(toFile: "audio${DateTime.now().millisecond}");
     // isRecorderReady = false;
     emit(RecordMessageSuccessState());
+    print("RecordMessageSuccessState");
   }
 
-  Future stop() async {
+  String? audioFileUrl;
+  File? audioFile;
+  Future stop({
+    String? receiverId,
+  }) async {
+    //* Uri.file(selectImage!.path).pathSegments.last}
     if (!isRecorderReady) return;
     final path = await recorder.stopRecorder();
-    final audioFile = File(path!);
-    print("recording $audioFile");
+    audioFile = File(path!);
+    // audioFile = File(audioFile!.path);
+    print("audioFile $audioFile");
+    voiceSave(receiverId: receiverId);
+
+    print("recording ${audioFileUrl}");
+  }
+
+  //*===========================================================================
+  //*                          time Record
+  //*===========================================================================
+
+  int? secondTime = 0;
+  int? minutesTime = 0;
+  int timeRecord() {
+    Timer.periodic(
+      const Duration(seconds: 1),
+      (Timer timer) {
+        secondTime = secondTime! + 1;
+        emit(TimeRecordChangeState());
+
+        if (secondTime == 10) {
+          minutesTime = minutesTime! + 1;
+          secondTime = 0;
+          print("60 seconds");
+          emit(TimeRecordChangeState());
+        }
+        if (isChangeHintText == false) timer.cancel();
+      },
+    );
+    print("TimeRecordChangeState");
+    return secondTime!;
+  }
+
+  //*===========================================================================
+  //*                      play record sound
+  //*===========================================================================
+  bool showPlay = false;
+
+  AssetsAudioPlayer player = AssetsAudioPlayer();
+  Future initplayer({String? path}) async {
+    player.open(Audio("$path"), autoStart: false, showNotification: true);
+    showPlay = !showPlay;
+    emit(PlayRecordState());
+    print("PlayRecordState");
+  }
+
+  Future<void> voiceSave({String? receiverId}) async {
+    emit(UploadRecordLoadingState());
+    print("UploadRecordLoadingState");
+    FirebaseStorage.instance
+        .ref("records/${Uri.file(audioFile!.path).pathSegments.last}")
+        .putFile(audioFile!)
+        .then((value) {
+      value.ref.getDownloadURL().then((value) {
+        //? value => paht url
+        print("value url  ${value}");
+
+        emit(UploadRecordSuccessState());
+        print("UploadRecordSuccessState");
+
+        sendMessage(
+          receiverId: receiverId,
+          record: "${value}.mp3",
+          dateTime: DateTime.now().toString(),
+        );
+      }).catchError((onError) {
+        emit(UploadRecordErrorState());
+        print("UploadRecordErrorState : $onError");
+      });
+    }).catchError((onError) {
+      emit(UploadRecordErrorState());
+      print("UploadRecordErrorState : $onError");
+    });
   }
 }

@@ -29,3 +29,13 @@ class UploadImageSuccessState extends ChattingState {}
 class UploadImageErrorState extends ChattingState {}
 
 class RecordMessageSuccessState extends ChattingState {}
+
+class TimeRecordChangeState extends ChattingState {}
+
+class PlayRecordState extends ChattingState {}
+
+class UploadRecordLoadingState extends ChattingState {}
+
+class UploadRecordSuccessState extends ChattingState {}
+
+class UploadRecordErrorState extends ChattingState {}
