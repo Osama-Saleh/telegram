@@ -24,6 +24,7 @@ class MyMessage extends StatelessWidget {
             child: messageModel!.text != null 
                 //* spicail to text
                 ? Container(
+                  margin: EdgeInsets.only(left: 30.h),
                     decoration: BoxDecoration(
                         color: Colors.green[300]!.withOpacity(.5),
                         borderRadius: const BorderRadiusDirectional.only(

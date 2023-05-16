@@ -254,37 +254,36 @@ class _ChattingState extends State<ChattingView> {
                                           cubit.hintText = "Message";
                                           print("cubit.changeHintText");
                                         });
-                                      }
-                                      else {
-
-                                      cubit
-                                          .sendMessage(
-                                        receiverId: widget.model!.token,
-                                        dateTime: DateTime.now().toString(),
-                                        text: messageController.text,
-                                        // image: cubit.selectImage.toString(),
-                                        record: cubit.recordFile,
-                                      )
-                                          .whenComplete(() {
-                                        if (cubit.messages != null) {
-                                          Future.delayed(
-                                            const Duration(milliseconds: 1000),
-                                            () {
-                                              scrollController.animateTo(
-                                                  scrollController
-                                                      .position.maxScrollExtent,
-                                                  duration: const Duration(
-                                                      milliseconds: 100),
-                                                  curve: Curves.easeIn);
-                                            },
-                                          );
-                                          print("MaxScroll");
-                                          // print("MaxScroll ${cubit.messages![0].record}");
-                                        }
-                                        messageController.text = " ";
-                                        cubit.secondTime = 0;
-                                        cubit.minutesTime = 0;
-                                      });
+                                      } else {
+                                        cubit
+                                            .sendMessage(
+                                          receiverId: widget.model!.token,
+                                          dateTime: DateTime.now().toString(),
+                                          text: messageController.text,
+                                          // image: cubit.selectImage.toString(),
+                                          // record: cubit.audioUrl,
+                                        )
+                                            .whenComplete(() {
+                                          if (cubit.messages != null) {
+                                            Future.delayed(
+                                              const Duration(
+                                                  milliseconds: 1000),
+                                              () {
+                                                scrollController.animateTo(
+                                                    scrollController.position
+                                                        .maxScrollExtent,
+                                                    duration: const Duration(
+                                                        milliseconds: 100),
+                                                    curve: Curves.easeIn);
+                                              },
+                                            );
+                                            print("MaxScroll");
+                                            // print("MaxScroll ${cubit.messages![0].record}");
+                                          }
+                                          messageController.text = " ";
+                                          cubit.secondTime = 0;
+                                          cubit.minutesTime = 0;
+                                        });
                                       }
                                     },
                               icon: Icons.send,

@@ -5,9 +5,11 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sound/flutter_sound.dart';
+// import 'package:just_audio/just_audio.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:telegram/chatting/cubit/chatting_cubit.dart';
 import 'package:telegram/components/widgets/my_text.dart';
@@ -60,6 +62,9 @@ class _TestState extends State<Test> {
 
   int? num = 0;
   bool isPlay = false;
+  final audioPlayer = AudioPlayer();
+  Duration duration = Duration.zero;
+  Duration position = Duration.zero;
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ChattingCubit, ChattingState>(
@@ -89,22 +94,56 @@ class _TestState extends State<Test> {
               //     );
               //   },
               // ),
+              Slider(
+                min: 0,
+                max: duration.inSeconds.toDouble(),
+                value: position.inSeconds.toDouble(),
+                onChanged: (value) {},
+              ),
+              Row(
+                children: [
+                  Text(position.toString()),
+                  Spacer(),
+                  Text(duration.toString()),
+                ],
+              ),
               ElevatedButton(
                   onPressed: () {
-                    ChattingCubit.get(context)
-                        .initplayer(
-                            path:
-                                "File: '/data/user/0/com.example.telegram/cache/audio237'")
-                        .whenComplete(() {
-                      if (ChattingCubit.get(context).showPlay == true) {
-                        ChattingCubit.get(context).player.pause();
-                      } else {
-                        ChattingCubit.get(context).player.play();
-                      }
-                      print("played");
+                    // audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(
+                    //     "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3")));
+                    // audioPlayer.setUrl(
+                    //     "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3");
+                    String? uri =
+                        "https://firebasestorage.googleapis.com/v0/b/telegram-da9d4.appspot.com/o/records%2Faudio184.mp3?alt=media&token=89f830fb-3adb-43b4-8e0c-af78c8c97e93.mp3";
+                  // var  uu = Uri.parse(uri);
+                    audioPlayer.play(UrlSource(uri));
+                    setState(() {
+                      isPlay = !isPlay;
                     });
+                    // if (isPlay) {
+                    //   await audioPlayer.pause();
+                    // } else {
+                    //   String? url =
+                    //       "https://firebasestorage.googleapis.com/v0/b/telegram-da9d4.appspot.com/o/records%2Faudio186.mp3?alt=media&token=49a65490-7c5e-4278-b982-44c807f5f54b.mp3";
+                    //   // var uuu = Uri.parse(url);
+                    //   await audioPlayer.setUrl(url);
+                    // }
+                    // ChattingCubit.get(context)
+                    //     .initplayer(
+                    //         path:
+                    //             "File: '/data/user/0/com.example.telegram/cache/audio237'")
+                    //     .whenComplete(() {
+                    //   if (ChattingCubit.get(context).showPlay == true) {
+                    //     ChattingCubit.get(context).player.pause();
+                    //   } else {
+                    //     String? url =
+                    //         "https://firebasestorage.googleapis.com/v0/b/telegram-da9d4.appspot.com/o/records%2Faudio186.mp3?alt=media&token=49a65490-7c5e-4278-b982-44c807f5f54b.mp3";
+                    //     ChattingCubit.get(context).player.play();
+                    //   }
+                    //   print("played");
+                    // });
                   },
-                  child: ChattingCubit.get(context).showPlay
+                  child: isPlay
                       ? const Icon(Icons.pause)
                       : const Icon(Icons.play_arrow)),
               // Text("$num"),

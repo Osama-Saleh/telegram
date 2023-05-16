@@ -169,7 +169,7 @@ class ChattingCubit extends Cubit<ChattingState> {
   bool isRecorderReady = false;
   bool isChangeHintText = false;
   String? hintText = "Message";
-  String? recordFile;
+  // String? recordFile;
 
   Future initRecorder() async {
     final status = await Permission.microphone.request();
@@ -189,7 +189,6 @@ class ChattingCubit extends Cubit<ChattingState> {
     print("RecordMessageSuccessState");
   }
 
-  String? audioFileUrl;
   File? audioFile;
   Future stop({
     String? receiverId,
@@ -198,11 +197,9 @@ class ChattingCubit extends Cubit<ChattingState> {
     if (!isRecorderReady) return;
     final path = await recorder.stopRecorder();
     audioFile = File(path!);
-    // audioFile = File(audioFile!.path);
     print("audioFile $audioFile");
     voiceSave(receiverId: receiverId);
-
-    print("recording ${audioFileUrl}");
+    // uploadAudio(path, receiverId!);
   }
 
   //*===========================================================================
@@ -243,13 +240,54 @@ class ChattingCubit extends Cubit<ChattingState> {
     emit(PlayRecordState());
     print("PlayRecordState");
   }
+//!============================================================================
+//!     save recorod sound another way
+  // final Reference storageReference =
+  //     FirebaseStorage.instance.ref().child('audio');
+//* from GPT
+// Upload audio file to Firebase Storage
+  // var downloadURL;
+  // Future<void> uploadAudio(String path, String receiverId) async {
+  //   final file = File(path);
+  //   final uploadTask =
+  //       storageReference.child('${DateTime.now()}.mp3').putFile(file,
+  //       //! May be use it or not
+  //       SettableMetadata(contentType: 'audio/wav')
+  //       );
+  //   final snapshot = await uploadTask.whenComplete(() {
+  //     // sendMessage(
+  //     //   dateTime: DateTime.now().toString(),
+  //     //   receiverId: receiverId,
+  //     //   record: path
+  //     // );
+  //     emit(UploadRecordSuccessState());
+  //     print("UploadRecordSuccessState");
+  //   });
 
+  //   if (snapshot.state == TaskState.success) {
+  //     downloadURL = await snapshot.ref.getDownloadURL().whenComplete(() {
+  //       print("downloadURL $downloadURL");
+  //       // sendMessage(
+  //       //   dateTime: DateTime.now().toString(),
+  //       //   receiverId: receiverId,
+  //       //   record: downloadURL,
+  //       // );
+  //     });
+  //     // return downloadURL;
+  //   } else {
+  //     throw 'Audio upload failed';
+  //   }
+  // }
+//!============================================================================
+
+  String? audioUrl;
   Future<void> voiceSave({String? receiverId}) async {
     emit(UploadRecordLoadingState());
     print("UploadRecordLoadingState");
+
     FirebaseStorage.instance
-        .ref("records/${Uri.file(audioFile!.path).pathSegments.last}")
-        .putFile(audioFile!)
+        .ref("records/${Uri.file(audioFile!.path).pathSegments.last}.mp3")
+        .putFile(audioFile!,SettableMetadata(contentType: 'audio/wav'))
         .then((value) {
       value.ref.getDownloadURL().then((value) {
         //? value => paht url
@@ -257,10 +295,10 @@ class ChattingCubit extends Cubit<ChattingState> {
 
         emit(UploadRecordSuccessState());
         print("UploadRecordSuccessState");
-
+        audioUrl = "${value}.mp3";
         sendMessage(
           receiverId: receiverId,
-          record: "${value}.mp3",
+          record: audioUrl,
           dateTime: DateTime.now().toString(),
         );
       }).catchError((onError) {
