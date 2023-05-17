@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
@@ -59,6 +60,7 @@ class _ChattingState extends State<ChattingView> {
 
   @override
   void dispose() {
+    
     ChattingCubit.get(context).recorder.closeRecorder();
     print("record closed");
     // messageController.dispose();
@@ -74,8 +76,11 @@ class _ChattingState extends State<ChattingView> {
         cubit.getMessage(receiverId: widget.model!.token);
         return BlocConsumer<ChattingCubit, ChattingState>(
           listener: (context, state) {
-            // if (state is RecordMessageSuccessState) print("object");
-            // NewWidget(cubit: cubit);
+            if (state is SendMessageSuccessState) {
+              cubit.secondTime = 0;
+              cubit.minutesTime = 0;
+              cubit.hintText = "Message";
+            }
           },
           builder: (context, state) {
             return Scaffold(
@@ -120,10 +125,17 @@ class _ChattingState extends State<ChattingView> {
                   ),
                   leading: MyIconButton(
                     onPressed: () {
+                      // SchedulerBinding.instance.addPostFrameCallback((_) {
+                      //   Navigator.pushReplacement(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (__) => const HomeView(),
+                      //     ));
+                      // });
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const HomeView(),
+                            builder: (context) =>const  HomeView(),
                           ));
                     },
                     icon: Icons.arrow_back,
@@ -171,9 +183,9 @@ class _ChattingState extends State<ChattingView> {
                     //*                 input my message
 
                     //*========================================================
-                    Container(
-                      child: Text("${cubit.minutesTime}:${cubit.secondTime}"),
-                    ),
+                    // Container(
+                    //   child: Text("${cubit.minutesTime}:${cubit.secondTime}"),
+                    // ),
 
                     Form(
                       key: formKey,

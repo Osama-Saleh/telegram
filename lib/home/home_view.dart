@@ -24,7 +24,7 @@ class _HomeViewState extends State<HomeView> {
   UserModel? userModel = UserModel();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext contextt) {
     return Scaffold(
       body: PageView(
         controller: pageController,

@@ -92,13 +92,13 @@ class _UserViewState extends State<UserView> {
                             UserCubit.get(context).countUsers!.length,
                       ),
                     ),
-                    TextButton(
-                        onPressed: () {
-                          myShowModealBottomSheet(context, key: animatedKey);
+                    // TextButton(
+                    //     onPressed: () {
+                    //       myShowModealBottomSheet(context, key: animatedKey);
 
-                          // HomeCubit.get(context).insertItems(key: animatedKey);
-                        },
-                        child: const Text("Add"))
+                    //       // HomeCubit.get(context).insertItems(key: animatedKey);
+                    //     },
+                    //     child: const Text("Add"))
                   ],
                 ),
 

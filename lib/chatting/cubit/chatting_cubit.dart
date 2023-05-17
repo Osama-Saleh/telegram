@@ -100,6 +100,7 @@ class ChattingCubit extends Cubit<ChattingState> {
       for (var element in event.docs) {
         messages!.add(MessageModel.fromJson(element.data()));
       }
+      print("messages ${messages![13].onceRecordPlaying}");
       emit(GetMessageSuccessState());
       print("GetMessageSuccessState");
     });
@@ -287,7 +288,7 @@ class ChattingCubit extends Cubit<ChattingState> {
 
     FirebaseStorage.instance
         .ref("records/${Uri.file(audioFile!.path).pathSegments.last}.mp3")
-        .putFile(audioFile!,SettableMetadata(contentType: 'audio/wav'))
+        .putFile(audioFile!, SettableMetadata(contentType: 'audio/wav'))
         .then((value) {
       value.ref.getDownloadURL().then((value) {
         //? value => paht url

@@ -2,18 +2,12 @@
 
 // ignore_for_file: avoid_print, unnecessary_brace_in_string_interps
 
-import 'dart:async';
-import 'dart:io';
-
+// import 'package:audioplayers/audioplayers.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sound/flutter_sound.dart';
-// import 'package:just_audio/just_audio.dart';
-import 'package:permission_handler/permission_handler.dart';
+// import 'package:flutter_sound/flutter_sound.dart';
 import 'package:telegram/chatting/cubit/chatting_cubit.dart';
-import 'package:telegram/components/widgets/my_text.dart';
-import 'package:telegram/state_management/home_cubit.dart';
 
 class Test extends StatefulWidget {
   const Test({super.key});
@@ -23,160 +17,119 @@ class Test extends StatefulWidget {
 }
 
 class _TestState extends State<Test> {
-  final recorder = FlutterSoundRecorder();
+  // final recorder = FlutterSoundRecorder();
   bool isRecorderReady = false;
 
-  Future initRecorder() async {
-    final status = await Permission.microphone.request();
-    if (status != PermissionStatus.granted) {
-      throw "Microphone Permission not granted";
-    }
-    await recorder.openRecorder();
-    isRecorderReady = true;
-    recorder.setSubscriptionDuration(const Duration(milliseconds: 500));
-  }
+  // Future initRecorder() async {
+  //   final status = await Permission.microphone.request();
+  //   if (status != PermissionStatus.granted) {
+  //     throw "Microphone Permission not granted";
+  //   }
+  //   await recorder.openRecorder();
+  //   isRecorderReady = true;
+  //   recorder.setSubscriptionDuration(const Duration(milliseconds: 500));
+  // }
 
-  Future record() async {
-    if (!isRecorderReady) return;
-    await recorder.startRecorder(toFile: "audio${DateTime.now().millisecond}");
-  }
+  // Future record() async {
+  //   if (!isRecorderReady) return;
+  //   await recorder.startRecorder(toFile: "audio${DateTime.now().millisecond}");
+  // }
 
-  Future stop() async {
-    if (!isRecorderReady) return;
-    final path = await recorder.stopRecorder();
-    final audioFile = File(path!);
-    print("recording $audioFile");
-  }
+  // Future stop() async {
+  //   if (!isRecorderReady) return;
+  //   final path = await recorder.stopRecorder();
+  //   final audioFile = File(path!);
+  //   print("recording $audioFile");
+  // }
 
   @override
   void initState() {
     super.initState();
-    initRecorder();
+    audioPlayer.onPlayerStateChanged.listen((state) {
+      setState(() {
+        isPlay = state == PlayerState.playing;
+      });
+    });
+    audioPlayer.onDurationChanged.listen((newDuration) {
+      setState(() {
+        duration = newDuration;
+      });
+    });
+
+    audioPlayer.onPositionChanged.listen((newPosition) {
+      setState(() {
+        position = newPosition;
+      });
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
-    recorder.closeRecorder();
+    // recorder.closeRecorder();
   }
 
-  int? num = 0;
-  bool isPlay = false;
   final audioPlayer = AudioPlayer();
+  bool isPlay = false;
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
+  String formatTime(int seconds) {
+    return "${Duration(seconds: seconds)}".split(".")[0].padLeft(8, "0");
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ChattingCubit, ChattingState>(
       listener: (context, state) {},
       builder: (context, state) {
         return Scaffold(
-            body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // StreamBuilder(
-              //   stream: recorder.onProgress,
-              //   builder: (context, snapshot) {
-              //     final duraton =
-              //         snapshot.hasData ? snapshot.data!.duration : Duration.zero;
-
-              //     String twoDigits(int n) => n.toString().padLeft(0);
-              //     final twoDigitsMinutes =
-              //         twoDigits(duraton.inMinutes.remainder(60));
-              //     final twoDigitsSeconds =
-              //         twoDigits(duraton.inSeconds.remainder(60));
-
-              //     return MyText(
-              //       text: "${twoDigitsMinutes} : $twoDigitsSeconds",
-              //       fontSize: 20,
-              //       fontWeight: FontWeight.bold,
-              //     );
-              //   },
-              // ),
-              Slider(
-                min: 0,
-                max: duration.inSeconds.toDouble(),
-                value: position.inSeconds.toDouble(),
-                onChanged: (value) {},
-              ),
-              Row(
-                children: [
-                  Text(position.toString()),
-                  Spacer(),
-                  Text(duration.toString()),
-                ],
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    // audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(
-                    //     "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3")));
-                    // audioPlayer.setUrl(
-                    //     "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3");
-                    String? uri =
-                        "https://firebasestorage.googleapis.com/v0/b/telegram-da9d4.appspot.com/o/records%2Faudio184.mp3?alt=media&token=89f830fb-3adb-43b4-8e0c-af78c8c97e93.mp3";
-                  // var  uu = Uri.parse(uri);
-                    audioPlayer.play(UrlSource(uri));
-                    setState(() {
-                      isPlay = !isPlay;
-                    });
-                    // if (isPlay) {
-                    //   await audioPlayer.pause();
-                    // } else {
-                    //   String? url =
-                    //       "https://firebasestorage.googleapis.com/v0/b/telegram-da9d4.appspot.com/o/records%2Faudio186.mp3?alt=media&token=49a65490-7c5e-4278-b982-44c807f5f54b.mp3";
-                    //   // var uuu = Uri.parse(url);
-                    //   await audioPlayer.setUrl(url);
-                    // }
-                    // ChattingCubit.get(context)
-                    //     .initplayer(
-                    //         path:
-                    //             "File: '/data/user/0/com.example.telegram/cache/audio237'")
-                    //     .whenComplete(() {
-                    //   if (ChattingCubit.get(context).showPlay == true) {
-                    //     ChattingCubit.get(context).player.pause();
-                    //   } else {
-                    //     String? url =
-                    //         "https://firebasestorage.googleapis.com/v0/b/telegram-da9d4.appspot.com/o/records%2Faudio186.mp3?alt=media&token=49a65490-7c5e-4278-b982-44c807f5f54b.mp3";
-                    //     ChattingCubit.get(context).player.play();
-                    //   }
-                    //   print("played");
-                    // });
-                  },
-                  child: isPlay
-                      ? const Icon(Icons.pause)
-                      : const Icon(Icons.play_arrow)),
-              // Text("$num"),
-              // InkWell(
-              //     onLongPress: () {
-              //       Timer.periodic(
-              //         const Duration(seconds: 1),
-              //         (Timer timer) {
-              //           setState(() {
-              //             num = num! + 1;
-              //           });
-              //           if (num == 60) {
-              //             timer.cancel();
-              //           }
-              //         },
-              //       );
-              //     },
-              //     child: Icon(Icons.ads_click))
-            ],
+            body: Container(
+          color: Colors.amber,
+          child: Container(
+            height: 80,
+            color: Colors.red,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                        onPressed: () {
+                          String? uri =
+                              // "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3";
+                              "https://firebasestorage.googleapis.com/v0/b/telegram-da9d4.appspot.com/o/records%2Faudio184.mp3?alt=media&token=89f830fb-3adb-43b4-8e0c-af78c8c97e93.mp3";
+                          // var  uu = Uri.parse(uri);
+                          audioPlayer.play(UrlSource(uri));
+                          setState(() {
+                            isPlay = !isPlay;
+                          });
+                        },
+                        child: isPlay
+                            ? const Icon(Icons.pause)
+                            : const Icon(Icons.play_arrow)),
+                    Slider(
+                      min: 0,
+                      max: duration.inSeconds.toDouble(),
+                      value: position.inSeconds.toDouble(),
+                      onChanged: (value) {
+                        final position = Duration(seconds: value.toInt());
+                        audioPlayer.seek(position);
+                        audioPlayer.resume();
+                      },
+                    )
+                  ],
+                ),
+                Row(
+                  children: [
+                    // Text(formatTime(position.inSeconds)),
+                    Spacer(),
+                    Text(formatTime((duration - position).inSeconds)),
+                  ],
+                ),
+              ],
+            ),
           ),
-        )
-            // Center(
-            //     child: Container(
-            //   child: SocialMediaRecorder(
-            //     sendRequestFunction: (soundFile) {
-            //       // print("the current path is ${soundFile.path}");
-            //       print("Recorded");
-            //     },
-            //     encode: AudioEncoderType.AAC,
-            //   ),
-            // )),
-
-            );
+        ));
       },
     );
   }

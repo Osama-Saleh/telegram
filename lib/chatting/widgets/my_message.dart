@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable, avoid_unnecessary_containers, avoid_print
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:photo_view/photo_view.dart';
@@ -8,9 +9,58 @@ import 'package:telegram/Module/message_model.dart';
 import 'package:telegram/chatting/cubit/chatting_cubit.dart';
 import 'package:telegram/components/widgets/my_text.dart';
 
-class MyMessage extends StatelessWidget {
+class MyMessage extends StatefulWidget {
   MyMessage({super.key, this.messageModel});
   MessageModel? messageModel;
+
+  @override
+  State<MyMessage> createState() => _MyMessageState();
+}
+
+class _MyMessageState extends State<MyMessage> {
+  final audioPlayer = AudioPlayer();
+
+  bool isPlay = false;
+
+  Duration duration = Duration.zero;
+
+  Duration position = Duration.zero;
+
+  String formatTime(int seconds) {
+    return "${Duration(seconds: seconds)}".split(".")[0].padLeft(8, "0");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    audioPlayer.onPlayerStateChanged.listen((state) {
+      setState(() {
+        isPlay = state == PlayerState.playing;
+      });
+    });
+    audioPlayer.onDurationChanged.listen((newDuration) {
+      setState(() {
+        duration = newDuration;
+      });
+    });
+
+    audioPlayer.onPositionChanged.listen((newPosition) {
+      setState(() {
+        position = newPosition;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    // recorder.closeRecorder();
+  }
+
+  void oncePlayRecord(bool isplayed) {
+    isPlay = isplayed;
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +71,10 @@ class MyMessage extends StatelessWidget {
           padding: const EdgeInsets.only(right: 10),
           child: Align(
             alignment: AlignmentDirectional.topEnd,
-            child: messageModel!.text != null 
+            child: widget.messageModel!.text != null
                 //* spicail to text
                 ? Container(
-                  margin: EdgeInsets.only(left: 30.h),
+                    margin: EdgeInsets.only(left: 30.h),
                     decoration: BoxDecoration(
                         color: Colors.green[300]!.withOpacity(.5),
                         borderRadius: const BorderRadiusDirectional.only(
@@ -36,26 +86,96 @@ class MyMessage extends StatelessWidget {
                         child:
                             // messageModel!.text != null ?
                             MyText(
-                          text: "${messageModel!.text}",
+                          text: "${widget.messageModel!.text}",
                           fontSize: 15.sp,
                         )
                         // : Image(image: NetworkImage("${messageModel!.image}"),fit: BoxFit.cover,)
                         ),
                   )
-                : messageModel!.record != null
-                    ? InkWell(
-                        onTap: () {
-                          ChattingCubit.get(context).initplayer(path: "${messageModel!.record}").whenComplete(() {
-                            ChattingCubit.get(context).player.play();
-                          print("played");
-                          });
-                        },
-                        child: Container(
-                          width: 100,
-                          height: 100,
-                          color: Colors.red,
-                          child:Text("${messageModel!.record}"),
-                          // const Icon(Icons.play_arrow)
+                //* spicail to record message
+                : widget.messageModel!.record != null
+                    ? Container(
+                        width: 60.w,
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            color: Colors.green[300]!.withOpacity(.5),
+                            borderRadius: const BorderRadiusDirectional.only(
+                                bottomEnd: Radius.circular(10),
+                                topStart: Radius.circular(10),
+                                bottomStart: Radius.circular(10))),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    String? uri =
+                                        // "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3";
+                                        "${widget.messageModel!.record}";
+                                    setState(() {
+                                      isPlay = !isPlay;
+                                    // widget.messageModel.onceRecordPlaying = true;
+                                    });
+                                    if (isPlay == false) {
+                                      audioPlayer.pause();
+                                    } else {
+                                      audioPlayer.play(UrlSource(uri));
+                                    }
+                                    print(isPlay);
+                                  },
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.green[700],
+                                    child: isPlay
+                                        ? const Icon(Icons.pause)
+                                        : const Icon(Icons.play_arrow),
+                                  ),
+                                ),
+                                // ElevatedButton(
+                                //     onPressed: () {
+                                //       String? uri =
+                                //           // "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3";
+                                //           "${widget.messageModel!.record}";
+                                //       setState(() {
+                                //         isPlay = !isPlay;
+                                //       });
+                                //       if (isPlay == false) {
+                                //         audioPlayer.pause();
+                                //       }else{
+                                //       audioPlayer.play(UrlSource(uri));
+
+                                //       }
+                                //       print(isPlay);
+                                //     },
+                                //     child: isPlay
+                                //         ? const Icon(Icons.pause)
+                                //         : const Icon(Icons.play_arrow)),
+                                Expanded(
+                                  child: Slider(
+                                    min: 0,
+                                    max: duration.inSeconds.toDouble(),
+                                    value: position.inSeconds.toDouble(),
+                                    thumbColor: Colors.green,
+                                    activeColor: Colors.green[900],
+                                    onChanged: (value) {
+                                      final position =
+                                          Duration(seconds: value.toInt());
+                                      audioPlayer.seek(position);
+                                      audioPlayer.resume();
+                                    },
+                                  ),
+                                )
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                // Text(formatTime(position.inSeconds)),
+                                Spacer(),
+                                Text(formatTime(
+                                    (duration - position).inSeconds)),
+                              ],
+                            ),
+                          ],
                         ),
                       )
                     //* spicail to image
@@ -72,23 +192,60 @@ class MyMessage extends StatelessWidget {
                             padding: const EdgeInsets.all(8.0),
                             child: InkWell(
                               onTap: () {
+                                // Dialog(
+                                //   child: Container(
+                                //     width: 200,
+                                //     height: 200,
+                                //     decoration: BoxDecoration(
+                                //         image: DecorationImage(
+                                //             image: ExactAssetImage(
+                                //                 'assets/tamas.jpg'),
+                                //             fit: BoxFit.cover)),
+                                //   ),
+                                // );
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
                                     return Container(
-                                      child: AlertDialog(
-                                        content: PhotoView(
+                                        height:
+                                            MediaQuery.of(context).size.height,
+                                        // decoration: BoxDecoration(
+                                        // color: Colors.amber,
+                                        //     image: DecorationImage(
+                                        //   image: NetworkImage(
+                                        //       "${widget.messageModel!.image}"),
+                                        //   fit: BoxFit.fill,
+                                        // )),
+                                        child: PhotoView(
                                           imageProvider: NetworkImage(
-                                              "${messageModel!.image}"),
-                                        ),
-                                      ),
-                                    );
+                                            "${widget.messageModel!.image}",
+                                          ),
+                                        )
+                                        // child: Dialog(
+                                        //   child: Container(
+                                        //     child: PhotoView(
+                                        //     imageProvider: NetworkImage(
+
+                                        //       "${widget.messageModel!.image}",
+
+                                        //     ),
+                                        //   ),
+                                        //   ),
+                                        //   // child: PhotoView(
+                                        //   //   imageProvider: NetworkImage(
+                                        //   //     "${widget.messageModel!.image}",
+
+                                        //   //   ),
+                                        //   // ),
+                                        // ),
+                                        );
                                   },
                                 );
                                 print("object");
                               },
                               child: Image(
-                                image: NetworkImage("${messageModel!.image}"),
+                                image: NetworkImage(
+                                    "${widget.messageModel!.image}"),
                                 fit: BoxFit.cover,
                               ),
                             )),

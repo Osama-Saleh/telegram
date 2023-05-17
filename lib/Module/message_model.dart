@@ -3,9 +3,10 @@ class MessageModel {
   String? senderId;
   String? receiverId;
   String? dateTime;
-  String? text ;
+  String? text;
   String? image;
   String? record;
+  bool? onceRecordPlaying = true;
   MessageModel({
     this.senderId,
     this.receiverId,
@@ -13,6 +14,7 @@ class MessageModel {
     this.text,
     this.image,
     this.record,
+    this.onceRecordPlaying,
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +25,7 @@ class MessageModel {
       'text': text,
       'image': image,
       'record': record,
+      'onceRecordPlaying': onceRecordPlaying,
     };
   }
 
@@ -34,6 +37,8 @@ class MessageModel {
       text: map['text'],
       image: map['image'],
       record: map['record'],
+      onceRecordPlaying: map['onceRecordPlaying'],
+      
     );
   }
 }
