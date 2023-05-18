@@ -6,6 +6,7 @@ class MessageModel {
   String? text;
   String? image;
   String? record;
+  String? docs;
   bool? onceRecordPlaying = true;
   MessageModel({
     this.senderId,
@@ -14,6 +15,7 @@ class MessageModel {
     this.text,
     this.image,
     this.record,
+    this.docs,
     this.onceRecordPlaying,
   });
 
@@ -25,6 +27,7 @@ class MessageModel {
       'text': text,
       'image': image,
       'record': record,
+      'docs': docs,
       'onceRecordPlaying': onceRecordPlaying,
     };
   }
@@ -37,8 +40,8 @@ class MessageModel {
       text: map['text'],
       image: map['image'],
       record: map['record'],
+      docs: map['docs'],
       onceRecordPlaying: map['onceRecordPlaying'],
-      
     );
   }
 }

@@ -39,3 +39,9 @@ class UploadRecordLoadingState extends ChattingState {}
 class UploadRecordSuccessState extends ChattingState {}
 
 class UploadRecordErrorState extends ChattingState {}
+
+class SelectDocumentsLoadingState extends ChattingState {}
+
+class SelectDocumentsSuccessState extends ChattingState {}
+
+class SelectDocumentsErrorState extends ChattingState {}

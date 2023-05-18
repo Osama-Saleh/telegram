@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sound/public/flutter_sound_recorder.dart';
@@ -30,13 +31,13 @@ class ChattingCubit extends Cubit<ChattingState> {
   //*=============================================
   //?=======  save messages in firebase =========
   //*=============================================
-  Future<void> sendMessage({
-    String? receiverId,
-    String? text,
-    String? dateTime,
-    String? image,
-    String? record,
-  }) async {
+  Future<void> sendMessage(
+      {String? receiverId,
+      String? text,
+      String? dateTime,
+      String? image,
+      String? record,
+      String? docs}) async {
     emit(SendMessageLoadingState());
     print("SendMessageLoadingState");
     MessageModel messageModel = MessageModel(
@@ -46,6 +47,7 @@ class ChattingCubit extends Cubit<ChattingState> {
       senderId: MyConst.uidUser,
       image: image,
       record: record,
+      docs: docs,
     );
     //* my chat
     FirebaseFirestore.instance
@@ -100,7 +102,7 @@ class ChattingCubit extends Cubit<ChattingState> {
       for (var element in event.docs) {
         messages!.add(MessageModel.fromJson(element.data()));
       }
-      print("messages ${messages![13].onceRecordPlaying}");
+      // print("messages ${messages![13].onceRecordPlaying}");
       emit(GetMessageSuccessState());
       print("GetMessageSuccessState");
     });
@@ -120,6 +122,7 @@ class ChattingCubit extends Cubit<ChattingState> {
     if (imagefile != null) {
       selectImage = File(imagefile.path);
       print("image Path is : ${selectImage}");
+
       uploadImage(receiverId: receiverId);
       emit(SelectImageSuccessState());
       print("SelectImageSuccessState");
@@ -309,6 +312,57 @@ class ChattingCubit extends Cubit<ChattingState> {
     }).catchError((onError) {
       emit(UploadRecordErrorState());
       print("UploadRecordErrorState : $onError");
+    });
+  }
+
+  //*=======================================================================
+  //*                      send docs <pdf,word,files>
+  //*=======================================================================
+
+  String? filePath;
+  String? fileName;
+  Future selectDocuments({String? receiverId}) async {
+    emit(SelectDocumentsLoadingState());
+    print("SelectDocumentsLoadingState");
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      PlatformFile? file = result.files.first;
+      // String fileName = file.name;
+      print("name file ${result.names.first}");
+      fileName = result.names.first;
+      // PlatformFile file = result.files.first;
+      // String fileName = file.name;
+      filePath = file.path;
+      // Continue with the upload process
+    } else {
+      // User canceled the file selection
+    }
+
+    // File finalRsult = result as File;
+    print("filePath $filePath");
+    FirebaseStorage.instance
+        .ref("docs/$fileName")
+        .putFile(File(filePath!))
+        .then((value) {
+      value.ref.getDownloadURL().then((value) {
+        //? value => paht url
+        print("value url  ${value}");
+        // print(object);
+        sendMessage(
+          receiverId: receiverId,
+          docs: value,
+          dateTime: DateTime.now().toString(),
+        );
+        emit(SelectDocumentsSuccessState());
+        print("SelectDocumentsSuccessState");
+      }).catchError((onError) {
+        emit(SelectDocumentsErrorState());
+        print("SelectDocumentsErrorState : $onError");
+      });
+    }).catchError((onError) {
+      emit(SelectDocumentsErrorState());
+      print("SelectDocumentsErrorState : $onError");
     });
   }
 }

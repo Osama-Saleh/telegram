@@ -5,6 +5,7 @@ class HiveHelper {
   // static var box;
   static Future<void> hiveInit() async {
     await Hive.initFlutter();
+    
   }
 
   // static String? boxName;
@@ -24,4 +25,6 @@ class HiveHelper {
   }) {
     return box.get(key);
   }
+
+  
 }

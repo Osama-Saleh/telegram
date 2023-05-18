@@ -1,11 +1,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.telegram">
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <!-- <uses-permission android:name="android.permission.RECORD_AUDIO"/> -->
-    <!-- <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"/> -->
+    
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
-        tools:ignore="ScopedStorage" /> -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <provider
+        android:name="androidx.core.content.FileProvider"
+        android:authorities="com.example.open_document_example.fileprovider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+        <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/provider_paths" />
+    </provider>
    <application
         
         android:label="telegram"

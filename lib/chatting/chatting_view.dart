@@ -4,7 +4,6 @@ import 'dart:async';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
@@ -17,7 +16,6 @@ import 'package:telegram/components/const.dart';
 import 'package:telegram/home/home_view.dart';
 import 'package:telegram/components/widgets/my_icon_button.dart';
 import 'package:telegram/components/widgets/my_text.dart';
-import 'package:flutter_sound/flutter_sound.dart';
 
 class ChattingView extends StatefulWidget {
   ChattingView({super.key, this.model});
@@ -59,13 +57,18 @@ class _ChattingState extends State<ChattingView> {
   }
 
   @override
-  void dispose() {
-    
-    ChattingCubit.get(context).recorder.closeRecorder();
-    print("record closed");
-    // messageController.dispose();
-    super.dispose();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // dispose();
   }
+
+  // @override
+  // void dispose() {
+  //   ChattingCubit.get(context).recorder.closeRecorder();
+  //   print("record closed");
+  //   // messageController.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -132,11 +135,15 @@ class _ChattingState extends State<ChattingView> {
                       //       builder: (__) => const HomeView(),
                       //     ));
                       // });
+                      // Navigator.pushReplacementNamed(context, "/homeView");
+
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>const  HomeView(),
-                          ));
+                            builder: (context) => const HomeView(),
+                          )).whenComplete(() {
+                        ChattingCubit.get(context).recorder.closeRecorder();
+                      });
                     },
                     icon: Icons.arrow_back,
                   ),
@@ -308,7 +315,11 @@ class _ChattingState extends State<ChattingView> {
 
                             // ),
                             // ElevatedButton(onPressed: (){}, child: Icon(Icons.image_outlined)),
-
+                            MyIconButton(
+                                onPressed: () {
+                                  cubit.selectDocuments(receiverId: widget.model!.token);
+                                },
+                                icon: Icons.attach_file_sharp),
                             InkWell(
                               onLongPress: () async {
                                 if (isMice == true) {

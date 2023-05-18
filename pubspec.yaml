@@ -56,13 +56,18 @@ dependencies:
   # =====================
   flutter_sound: ^9.2.13
   assets_audio_player: ^3.0.6
-  # just_audio: ^0.9.32
   audioplayers: ^4.0.1
-
-  # social_media_recorder: ^0.1.86
   permission_handler: ^10.2.0
   # =====================
-
+  file_picker: 
+  webview_flutter: ^4.2.0
+  url_launcher: ^6.1.11
+  open_document: 
+# dependency_overrides:
+#   photo_view: 
+#     git:
+#       url: https://github.com/bluefireteam/photo_view
+      # ref: master
 dev_dependencies:
   flutter_test:
     sdk: flutter
