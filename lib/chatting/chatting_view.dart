@@ -171,10 +171,11 @@ class _ChattingState extends State<ChattingView> {
                                     //* My message
                                     return MyMessage(
                                       messageModel: cubit.messages![index],
+                                      fileName: cubit.fileName![index],
                                     );
                                   }
                                   return
-
+                
                                       //* receive message
                                       ReceiveMessage(
                                     messageModel: cubit.messages![index],
@@ -188,12 +189,12 @@ class _ChattingState extends State<ChattingView> {
                                     .length)),
                     //*========================================================
                     //*                 input my message
-
+                
                     //*========================================================
                     // Container(
                     //   child: Text("${cubit.minutesTime}:${cubit.secondTime}"),
                     // ),
-
+                
                     Form(
                       key: formKey,
                       child: Container(
@@ -237,7 +238,7 @@ class _ChattingState extends State<ChattingView> {
                                           } else {
                                             cubit.selectEmoji();
                                           }
-
+                
                                           //*===========================================
                                           //* hide keyboardType when click in emoji icon
                                           //*===========================================
@@ -312,7 +313,7 @@ class _ChattingState extends State<ChattingView> {
                             //     cubit.setSelectImage(
                             //         receiverId: widget.model!.token);
                             //   },
-
+                
                             // ),
                             // ElevatedButton(onPressed: (){}, child: Icon(Icons.image_outlined)),
                             MyIconButton(
@@ -394,17 +395,17 @@ class _ChattingState extends State<ChattingView> {
                     //             messageController.text = value.toString();
                     //             print(value);
                     //           },
-
+                
                     //           decoration: InputDecoration(
                     //             // labelText: labelText,
                     //             labelStyle: TextStyle(fontSize: 15.sp),
                     //             hintText: "Message",
                     //             hintStyle: TextStyle(fontSize: 15.sp),
-
+                
                     //             border: InputBorder.none,
                     //             contentPadding: EdgeInsets.all(3.h),
                     //           ),
-
+                
                     //         ),
                     //         //  MyTextFormField(
                     //         //     controller: messageController,

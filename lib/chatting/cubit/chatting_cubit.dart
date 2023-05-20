@@ -320,7 +320,7 @@ class ChattingCubit extends Cubit<ChattingState> {
   //*=======================================================================
 
   String? filePath;
-  String? fileName;
+  List<String>? fileName = [];
   Future selectDocuments({String? receiverId}) async {
     emit(SelectDocumentsLoadingState());
     print("SelectDocumentsLoadingState");
@@ -328,9 +328,15 @@ class ChattingCubit extends Cubit<ChattingState> {
 
     if (result != null) {
       PlatformFile? file = result.files.first;
-      // String fileName = file.name;
       print("name file ${result.names.first}");
-      fileName = result.names.first;
+      // var names = result.names.first;
+      // print("name file ${names}");
+      // fileName!.addAll();
+      
+      fileName!.add("${result.names.first}");
+      print("fileNames : $fileName");
+
+      // fileName = result.names.first;
       // PlatformFile file = result.files.first;
       // String fileName = file.name;
       filePath = file.path;
@@ -342,7 +348,7 @@ class ChattingCubit extends Cubit<ChattingState> {
     // File finalRsult = result as File;
     print("filePath $filePath");
     FirebaseStorage.instance
-        .ref("docs/$fileName")
+        .ref("docs/${result!.names.first}")
         .putFile(File(filePath!))
         .then((value) {
       value.ref.getDownloadURL().then((value) {

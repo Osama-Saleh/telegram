@@ -14,8 +14,9 @@ import 'package:telegram/controller/local_storage/hive.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MyMessage extends StatefulWidget {
-  MyMessage({super.key, this.messageModel});
+  MyMessage({super.key, this.messageModel, this.fileName});
   MessageModel? messageModel;
+  String? fileName;
 
   @override
   State<MyMessage> createState() => _MyMessageState();
@@ -74,18 +75,15 @@ class _MyMessageState extends State<MyMessage> {
     // await launchUrl(Uri.parse(
     //       "https://firebasestorage.googleapis.com/v0/b/telegram-da9d4.appspot.com/o/docs?alt=media&token=f4250f1b-cf3c-4272-96d0-505b21d3e0c2"));
 
-    if (await canLaunchUrl(Uri.parse(
-        "https://firebasestorage.googleapis.com/v0/b/telegram-da9d4.appspot.com/o/docs?alt=media&token=f4250f1b-cf3c-4272-96d0-505b21d3e0c2"))) {
+    if (await canLaunchUrl(Uri.parse("$filePath"))) {
       await launchUrl(
-        Uri.parse(
-            "https://firebasestorage.googleapis.com/v0/b/telegram-da9d4.appspot.com/o/docs?alt=media&token=f4250f1b-cf3c-4272-96d0-505b21d3e0c2"),
+        Uri.parse("$filePath"),
         mode: LaunchMode.externalApplication,
       );
     } else {
       throw 'Could not launch document';
     }
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -93,14 +91,14 @@ class _MyMessageState extends State<MyMessage> {
       listener: (context, state) {},
       builder: (context, state) {
         return Padding(
-          padding: const EdgeInsets.only(right: 10),
+          padding:  EdgeInsets.only(right: 2.h,top: 2.h),
           child: Align(
               alignment: AlignmentDirectional.topEnd,
               child: widget.messageModel!.text != null ||
                       widget.messageModel!.docs != null
                   //* spicail to text
                   ? Container(
-                      margin: EdgeInsets.only(left: 30.h),
+                      margin: EdgeInsets.only(left: 25.h),
                       decoration: BoxDecoration(
                           color: Colors.green[300]!.withOpacity(.5),
                           borderRadius: const BorderRadiusDirectional.only(
@@ -113,14 +111,22 @@ class _MyMessageState extends State<MyMessage> {
                               ? InkWell(
                                   onTap: () async {
                                     print("Clicked");
-                                    
-                                    // openDocument(
-                                    //     "${widget.messageModel!.docs}");
+
+                                    openDocument(
+                                        "${widget.messageModel!.docs}");
                                   },
-                                  child: MyText(
-                                    text: "${widget.messageModel!.docs}",
-                                    fontSize: 15.sp,
-                                  ),
+                                  child: Row(children: [
+                                    Icon(Icons.file_copy_outlined),
+                                    SizedBox(
+                                      width: 1.h,
+                                    ),
+                                    Expanded(
+                                      child: MyText(
+                                        text: "${widget.fileName}",
+                                        fontSize: 15.sp,
+                                      ),
+                                    )
+                                  ]),
                                 )
                               : MyText(
                                   text: "${widget.messageModel!.text}",
