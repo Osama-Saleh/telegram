@@ -5,11 +5,13 @@ import 'dart:io';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sound/public/flutter_sound_recorder.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:telegram/Module/message_model.dart';
 import 'package:telegram/components/const.dart';
@@ -332,7 +334,7 @@ class ChattingCubit extends Cubit<ChattingState> {
       // var names = result.names.first;
       // print("name file ${names}");
       // fileName!.addAll();
-      
+
       fileName!.add("${result.names.first}");
       print("fileNames : $fileName");
 
@@ -370,5 +372,36 @@ class ChattingCubit extends Cubit<ChattingState> {
       emit(SelectDocumentsErrorState());
       print("SelectDocumentsErrorState : $onError");
     });
+  }
+
+  //*=======================================================================
+  //*                      download file Documents
+  //*=======================================================================
+  Map<int, double> downloadProgress = {};
+  void downloadFile(String pathUrl) async {
+    print("int download");
+    final externalDir = await getExternalStorageDirectory();
+    // final file = File("${externalDir!.path}/ ${ref.name}");
+    await Dio().download(
+      pathUrl,
+      externalDir!.path,
+      // onReceiveProgress: (count, total) {
+      //   double progress = count / total;
+      //   downloadProgress[index] = progress;
+      // },
+    );
+    emit(DownloadFileSuccessState());
+    print("DownloadFileSuccessState");
+    // var localPath = await getApplicationDocumentsDirectory();
+    // await FlutterDownloader.enqueue(
+    //   url: fileUrl,
+    //   savedDir: '/storage/emulated/0/Download',
+    //   showNotification:
+    //       true,
+    //   openFileFromNotification:
+    //       true,
+    // );
+    emit(DownloadFileSuccessState());
+    print("DownloadFileSuccessState");
   }
 }

@@ -171,7 +171,7 @@ class _ChattingState extends State<ChattingView> {
                                     //* My message
                                     return MyMessage(
                                       messageModel: cubit.messages![index],
-                                      fileName: cubit.fileName![index],
+                                      // fileName: cubit.fileName![index],
                                     );
                                   }
                                   return

@@ -45,3 +45,5 @@ class SelectDocumentsLoadingState extends ChattingState {}
 class SelectDocumentsSuccessState extends ChattingState {}
 
 class SelectDocumentsErrorState extends ChattingState {}
+
+class DownloadFileSuccessState extends ChattingState {}

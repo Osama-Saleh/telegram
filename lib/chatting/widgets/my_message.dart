@@ -1,22 +1,30 @@
 // ignore_for_file: must_be_immutable, avoid_unnecessary_containers, avoid_print
 
+import 'dart:isolate';
+import 'dart:ui';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:open_document/open_document.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+// import 'package:open_document/open_document.dart';
 // import 'package:open_document/open_document.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:sizer/sizer.dart';
 import 'package:telegram/Module/message_model.dart';
 import 'package:telegram/chatting/cubit/chatting_cubit.dart';
 import 'package:telegram/components/widgets/my_text.dart';
-import 'package:telegram/controller/local_storage/hive.dart';
-import 'package:url_launcher/url_launcher.dart';
+// import 'package:telegram/controller/local_storage/hive.dart';
 
 class MyMessage extends StatefulWidget {
-  MyMessage({super.key, this.messageModel, this.fileName});
+  MyMessage({
+    super.key,
+    this.messageModel,
+  });
   MessageModel? messageModel;
-  String? fileName;
+  // String? fileName;
 
   @override
   State<MyMessage> createState() => _MyMessageState();
@@ -34,6 +42,12 @@ class _MyMessageState extends State<MyMessage> {
   String formatTime(int seconds) {
     return "${Duration(seconds: seconds)}".split(".")[0].padLeft(8, "0");
   }
+
+  ReceivePort port = ReceivePort();
+  // bool? isLoading;
+  // bool? permissionReady;
+  // String? localPath;
+  // int? progress = 0;
 
   @override
   void initState() {
@@ -54,44 +68,111 @@ class _MyMessageState extends State<MyMessage> {
         position = newPosition;
       });
     });
+    IsolateNameServer.registerPortWithName(
+        port.sendPort, 'downloader_send_port');
+    port.listen((dynamic data) {
+      String? id = data[0];
+      DownloadTaskStatus  status = data[1] ;
+      int progress = data[2];
+      if (status.toString() == "DownloadTaskStatus(3)" && progress == 100 && id != null) {
+        print("Dowloaded Completed");
+      }
+      setState(() {});
+    });
+    FlutterDownloader.registerCallback(downloadCallback);
   }
+
+  static void downloadCallback(id, status, progress) {
+    SendPort? sendPort =
+        IsolateNameServer.lookupPortByName("downloader_send_port");
+    sendPort!.send([id, status, progress]);
+  }
+
+  // void bindBackgroundIsolated() {
+  //   bool isSucces = IsolateNameServer.registerPortWithName(
+  //       port.sendPort, 'downloader_send_port');
+  //   port.listen(
+  //     (dynamic data) {
+  //       String id = data[0];
+  //       DownloadTaskStatus status = data[1];
+  //       int progress = data[2];
+  //       FlutterDownloader.registerCallback(
+  //           downloadCallback);
+
+  //       setState(() {});
+  //       // if (status == DownloadTaskStatus.complete) {
+  //       // } else if (status == DownloadTaskStatus.running) {
+  //       //   Progresshud.showWithStatus("%$progress Downloaded");
+  //       // }
+  //     },
+  //     // onDone: () {
+  //     //   checkIfDictionaryUnzipped(DBFilePath);
+  //     // },
+  //     // onError: (error) {},
+  //   );
+  // }
 
   // @override
   // void dispose() {
   //   super.dispose();
+  //   IsolateNameServer.removePortNameMapping('downloader_send_port');
   //   // recorder.closeRecorder();
   // }
 
-  void oncePlayRecord(bool isplayed) {
-    isPlay = isplayed;
-    setState(() {});
-  }
+  // downloadCallback(String id, DownloadTaskStatus status, int progress) {
+  //   final SendPort? send =
+  //       IsolateNameServer.lookupPortByName('downloader_send_port');
+  //   send!.send([id, status, progress]);
+  // }
 
-  Future<void> openDocument(String? filePath) async {
-    // await OpenDocument.openDocument(
-    //     filePath: filePath!,
-    //   );
+  // void oncePlayRecord(bool isplayed) {
+  //   isPlay = isplayed;
+  //   setState(() {});
+  // }
 
-    // await launchUrl(Uri.parse(
-    //       "https://firebasestorage.googleapis.com/v0/b/telegram-da9d4.appspot.com/o/docs?alt=media&token=f4250f1b-cf3c-4272-96d0-505b21d3e0c2"));
+  Future download(String url) async {
+    final status = await Permission.storage.request();
 
-    if (await canLaunchUrl(Uri.parse("$filePath"))) {
-      await launchUrl(
-        Uri.parse("$filePath"),
-        mode: LaunchMode.externalApplication,
+    if (status.isGranted) {
+      final externalDir = await getExternalStorageDirectory();
+
+      await FlutterDownloader.enqueue(
+        url: url,
+        savedDir: externalDir!.path,
+        showNotification: true,
+        openFileFromNotification: true,
       );
     } else {
-      throw 'Could not launch document';
+      print('Permission Denied');
     }
   }
+
+  // Future<void> openDocument(String? filePath) async {
+  //   // await OpenDocument.openDocument(
+  //   //     filePath: filePath!,
+  //   //   );
+
+  //   // await launchUrl(Uri.parse(
+  //   //       "https://firebasestorage.googleapis.com/v0/b/telegram-da9d4.appspot.com/o/docs?alt=media&token=f4250f1b-cf3c-4272-96d0-505b21d3e0c2"));
+
+  //   if (await canLaunchUrl(Uri.parse("$filePath"))) {
+  //     await launchUrl(
+  //       Uri.parse("$filePath"),
+  //       mode: LaunchMode.externalApplication,
+  //     );
+  //   } else {
+  //     throw 'Could not launch document';
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ChattingCubit, ChattingState>(
       listener: (context, state) {},
       builder: (context, state) {
+        var cubit = ChattingCubit.get(context);
         return Padding(
-          padding:  EdgeInsets.only(right: 2.h,top: 2.h),
+          padding: EdgeInsets.only(right: 2.h, top: 2.h),
           child: Align(
               alignment: AlignmentDirectional.topEnd,
               child: widget.messageModel!.text != null ||
@@ -111,9 +192,18 @@ class _MyMessageState extends State<MyMessage> {
                               ? InkWell(
                                   onTap: () async {
                                     print("Clicked");
+                                    print("${cubit.fileName}");
 
-                                    openDocument(
-                                        "${widget.messageModel!.docs}");
+                                    // download(
+                                    //     "https://eecs.csuohio.edu/~sschung/cis430/Coronel_PPT_Ch01.pdf");
+                                    // download(
+                                    //     "https://file-examples.com/storage/fea9880a616463cab9f1575/2017/04/file_example_MP4_480_1_5MG.mp4");
+                                    download(
+                                        "https://eecs.csuohio.edu/~sschung/cis430/Coronel_PPT_Ch01.pdf");
+                                    // cubit.downloadFile(
+                                    //     "https://eecs.csuohio.edu/~sschung/cis430/Coronel_PPT_Ch01.pdf");
+                                    // openDocument(
+                                    //     "${widget.messageModel!.docs}");
                                   },
                                   child: Row(children: [
                                     Icon(Icons.file_copy_outlined),
@@ -122,7 +212,7 @@ class _MyMessageState extends State<MyMessage> {
                                     ),
                                     Expanded(
                                       child: MyText(
-                                        text: "${widget.fileName}",
+                                        text: "${widget.messageModel!.docs}",
                                         fontSize: 15.sp,
                                       ),
                                     )

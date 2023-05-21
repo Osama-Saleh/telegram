@@ -10,12 +10,6 @@ import 'package:sizer/sizer.dart';
 import 'package:telegram/components/app_colors.dart';
 import 'package:telegram/components/widgets/my_text.dart';
 
-// final String? title;
-//   final Function()? onPressed1;
-//   final Function()? onPressed2;
-//   final IconData? icon1;
-//   final IconData? icon2;
-//   final Widget? leading;
 AppBar MyAppBar(
     {String? title,
     Function()? onPressed1,
@@ -28,7 +22,7 @@ AppBar MyAppBar(
     toolbarHeight: 8.h,
     title: Padding(
       padding: EdgeInsets.only(left: 2.h),
-      child: MyText(
+      child: MyText(  
         text: title,
         fontSize: 18.sp,
       ),
@@ -64,9 +58,14 @@ AppBar MyAppBar(
 
 
 
+// final String? title;
+//   final Function()? onPressed1;
+//   final Function()? onPressed2;
+//   final IconData? icon1;
+//   final IconData? icon2;
+//   final Widget? leading;
 
-
-// class MyAppBar extends StatelessWidget with PreferredSizeWidget {
+// class MyAppBar extends StatelessWidget implements  PreferredSizeWidget {
 //   const MyAppBar(
 //       {super.key,
 //       this.title,
@@ -119,6 +118,8 @@ AppBar MyAppBar(
 //       leading: leading,
 //     );
 //   }
+  
+  
 
 //   @override
 //   // TODO: implement preferredSize
