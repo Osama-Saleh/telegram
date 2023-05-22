@@ -5,16 +5,18 @@ import 'dart:io';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_sound/public/flutter_sound_recorder.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:telegram/Module/message_model.dart';
 import 'package:telegram/components/const.dart';
+import 'package:telegram/controller/local_storage/hive.dart';
 
 part 'chatting_state.dart';
 
@@ -33,13 +35,16 @@ class ChattingCubit extends Cubit<ChattingState> {
   //*=============================================
   //?=======  save messages in firebase =========
   //*=============================================
-  Future<void> sendMessage(
-      {String? receiverId,
-      String? text,
-      String? dateTime,
-      String? image,
-      String? record,
-      String? docs}) async {
+  Future<void> sendMessage({
+    String? receiverId,
+    String? text,
+    String? dateTime,
+    String? image,
+    String? record,
+    String? docsUrl,
+    String? docsName,
+    String? docsLocation,
+  }) async {
     emit(SendMessageLoadingState());
     print("SendMessageLoadingState");
     MessageModel messageModel = MessageModel(
@@ -49,7 +54,9 @@ class ChattingCubit extends Cubit<ChattingState> {
       senderId: MyConst.uidUser,
       image: image,
       record: record,
-      docs: docs,
+      docsUrl: docsUrl,
+      docsName: docsName,
+      docsLocation: docsLocation,
     );
     //* my chat
     FirebaseFirestore.instance
@@ -322,7 +329,7 @@ class ChattingCubit extends Cubit<ChattingState> {
   //*=======================================================================
 
   String? filePath;
-  List<String>? fileName = [];
+  String? fileName;
   Future selectDocuments({String? receiverId}) async {
     emit(SelectDocumentsLoadingState());
     print("SelectDocumentsLoadingState");
@@ -330,38 +337,34 @@ class ChattingCubit extends Cubit<ChattingState> {
 
     if (result != null) {
       PlatformFile? file = result.files.first;
-      print("name file ${result.names.first}");
-      // var names = result.names.first;
-      // print("name file ${names}");
-      // fileName!.addAll();
+      print("name file ${result}");
 
-      fileName!.add("${result.names.first}");
-      print("fileNames : $fileName");
-
-      // fileName = result.names.first;
-      // PlatformFile file = result.files.first;
-      // String fileName = file.name;
+      // fileName!.add("${result.names.first}");
+      print("fileNames : ${result.names.first}");
+      fileName = result.names.first;
       filePath = file.path;
-      // Continue with the upload process
     } else {
       // User canceled the file selection
     }
 
-    // File finalRsult = result as File;
     print("filePath $filePath");
     FirebaseStorage.instance
         .ref("docs/${result!.names.first}")
         .putFile(File(filePath!))
         .then((value) {
       value.ref.getDownloadURL().then((value) {
-        //? value => paht url
+        //?===========================================================
+        //?                 value => paht url of file
+        //?===========================================================
         print("value url  ${value}");
-        // print(object);
+
         sendMessage(
           receiverId: receiverId,
-          docs: value,
+          docsUrl: value,
+          docsName: result.names.first,
           dateTime: DateTime.now().toString(),
         );
+        // downloadDocuments(url: value, fileName: fileName);
         emit(SelectDocumentsSuccessState());
         print("SelectDocumentsSuccessState");
       }).catchError((onError) {
@@ -377,31 +380,35 @@ class ChattingCubit extends Cubit<ChattingState> {
   //*=======================================================================
   //*                      download file Documents
   //*=======================================================================
-  Map<int, double> downloadProgress = {};
-  void downloadFile(String pathUrl) async {
-    print("int download");
-    final externalDir = await getExternalStorageDirectory();
-    // final file = File("${externalDir!.path}/ ${ref.name}");
-    await Dio().download(
-      pathUrl,
-      externalDir!.path,
-      // onReceiveProgress: (count, total) {
-      //   double progress = count / total;
-      //   downloadProgress[index] = progress;
-      // },
-    );
-    emit(DownloadFileSuccessState());
-    print("DownloadFileSuccessState");
-    // var localPath = await getApplicationDocumentsDirectory();
-    // await FlutterDownloader.enqueue(
-    //   url: fileUrl,
-    //   savedDir: '/storage/emulated/0/Download',
-    //   showNotification:
-    //       true,
-    //   openFileFromNotification:
-    //       true,
-    // );
-    emit(DownloadFileSuccessState());
-    print("DownloadFileSuccessState");
+  String? externalDir;
+  List<String> docsLocation = [];
+
+  Future downloadDocuments(
+      {required String url, required String? fileName}) async {
+    final status = await Permission.storage.request();
+
+    if (status.isGranted) {
+      final filPaht = await getExternalStorageDirectory();
+      externalDir = "${filPaht!.path}/${fileName}}";
+
+      print("externalDir $externalDir");
+
+      await FlutterDownloader.enqueue(
+        url: url,
+        savedDir: filPaht.path,
+        showNotification: true,
+        openFileFromNotification: true,
+        saveInPublicStorage: true,
+      ).whenComplete(() {
+        // HiveHelper.openBox(boxName: "docsLocation");
+        // HiveHelper.setData(key:"docsLocation", value:docsLocation )
+      });
+      docsLocation.add(externalDir!);
+      print("docsLocation$docsLocation");
+    } else {
+      print('Permission Denied');
+    }
   }
+
+ 
 }

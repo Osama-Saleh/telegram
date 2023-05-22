@@ -1,4 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+// ignore_for_file: public_member_api_docsUrl, sort_constructors_first
 class MessageModel {
   String? senderId;
   String? receiverId;
@@ -6,7 +6,9 @@ class MessageModel {
   String? text;
   String? image;
   String? record;
-  String? docs;
+  String? docsUrl;
+  String? docsName;
+  String? docsLocation;
   bool? onceRecordPlaying = true;
   MessageModel({
     this.senderId,
@@ -15,7 +17,9 @@ class MessageModel {
     this.text,
     this.image,
     this.record,
-    this.docs,
+    this.docsUrl,
+    this.docsName,
+    this.docsLocation,
     this.onceRecordPlaying,
   });
 
@@ -27,7 +31,9 @@ class MessageModel {
       'text': text,
       'image': image,
       'record': record,
-      'docs': docs,
+      'docsUrl': docsUrl,
+      'docsName': docsName,
+      'docsLocation': docsLocation,
       'onceRecordPlaying': onceRecordPlaying,
     };
   }
@@ -40,7 +46,9 @@ class MessageModel {
       text: map['text'],
       image: map['image'],
       record: map['record'],
-      docs: map['docs'],
+      docsUrl: map['docsUrl'],
+      docsName: map['docsName'],
+      docsLocation: map['docsLocation'],
       onceRecordPlaying: map['onceRecordPlaying'],
     );
   }

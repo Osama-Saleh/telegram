@@ -1,11 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.telegram">
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    
+    <!-- parmition to user mice to record and alow to downlad file in device -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- To open and install .apk files -->
+    <!-- To open and install files -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
   
    <application
@@ -14,7 +14,7 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:requestLegacyExternalStorage="true">
-        
+        <!-- speial to download file -->
         <provider
             android:name="vn.hunghd.flutterdownloader.DownloadedFileProvider"
             android:authorities="${applicationId}.flutter_downloader.provider"
@@ -38,15 +38,15 @@
                 tools:node="remove" />
         </provider> -->
 
-        <!-- <provider -->
-            <!-- android:name="vn.hunghd.flutterdownloader.FlutterDownloaderInitializer" -->
-            <!-- android:authorities="${applicationId}.flutter-downloader-init" -->
-            <!-- android:exported="false"> -->
+        <!-- <provider 
+            android:name="vn.hunghd.flutterdownloader.FlutterDownloaderInitializer"
+            android:authorities="${applicationId}.flutter-downloader-init"
+            android:exported="false"> -->
             <!-- changes this number to configure the maximum number of concurrent tasks -->
-            <!-- <meta-data -->
-            <!-- android:name="vn.hunghd.flutterdownloader.MAX_CONCURRENT_TASKS" -->
-            <!-- android:value="5" /> -->
-        <!-- </provider> -->
+            <!-- <meta-data
+            android:name="vn.hunghd.flutterdownloader.MAX_CONCURRENT_TASKS" 
+            android:value="5" />
+        </provider> -->
         
         <activity   
             android:name=".MainActivity"

@@ -32,7 +32,8 @@ void main() async {
 
   HiveHelper.hiveInit();
   Directory dir = await getApplicationDocumentsDirectory();
-  await HiveHelper.openBox(nameBox: "userData");
+  
+  await HiveHelper.openBox(boxName: "userData");
 
   MyConst.uidUser = HiveHelper.getData(key: "userToken");
 

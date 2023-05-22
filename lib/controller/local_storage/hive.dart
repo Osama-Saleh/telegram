@@ -1,7 +1,7 @@
 import 'package:hive_flutter/adapters.dart';
 
 class HiveHelper {
-  static late Box box;
+  static late Box box ;
   // static var box;
   static Future<void> hiveInit() async {
     await Hive.initFlutter();
@@ -9,8 +9,8 @@ class HiveHelper {
   }
 
   // static String? boxName;
-  static Future<void> openBox({String? nameBox}) async {
-    box = await Hive.openBox(nameBox!);
+  static Future<void> openBox({String? boxName}) async {
+    box = await Hive.openBox(boxName!);
   }
 
   static Future<void> setData({

@@ -37,7 +37,7 @@ class _LoginViewState extends State<LoginView> {
       listener: (context, state) async {
         if (state is LoginSuccessState) {
           // HiveHelper.boxName = "userData";
-          await HiveHelper.openBox(nameBox: "userData");
+          await HiveHelper.openBox(boxName: "userData");
           await HiveHelper.setData(key: "userToken", value: "${state.token}")
               .whenComplete(() {
             MyConst.uidUser = HiveHelper.getData(key: "userToken");

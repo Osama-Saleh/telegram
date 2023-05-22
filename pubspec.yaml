@@ -64,7 +64,8 @@ dependencies:
   url_launcher: ^6.1.11
   open_document: 
   flutter_downloader: ^1.10.2
-  dio: ^5.1.2
+  open_filex:  
+  # dio: ^5.1.2
 # dependency_overrides:
 #   photo_view: 
 #     git:

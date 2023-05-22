@@ -7,8 +7,9 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:open_filex/open_filex.dart';
+// import 'package:open_filex/open_filex.dart';
+
 // import 'package:open_document/open_document.dart';
 // import 'package:open_document/open_document.dart';
 import 'package:photo_view/photo_view.dart';
@@ -44,11 +45,7 @@ class _MyMessageState extends State<MyMessage> {
   }
 
   ReceivePort port = ReceivePort();
-  // bool? isLoading;
-  // bool? permissionReady;
-  // String? localPath;
-  // int? progress = 0;
-
+  int progress = 0;
   @override
   void initState() {
     super.initState();
@@ -68,102 +65,35 @@ class _MyMessageState extends State<MyMessage> {
         position = newPosition;
       });
     });
+    //* chick folder staus (faild - completed - run -......)
     IsolateNameServer.registerPortWithName(
         port.sendPort, 'downloader_send_port');
+        print("logprogress");
+        
     port.listen((dynamic data) {
       String? id = data[0];
-      DownloadTaskStatus  status = data[1] ;
+      DownloadTaskStatus status = data[1];
       int progress = data[2];
-      if (status.toString() == "DownloadTaskStatus(3)" && progress == 100 && id != null) {
+        print("Myprogress");
+      setState(() {
+        progress = data;
+      });
+      if (status.toString() == "DownloadTaskStatus(3)" &&
+          progress == 100 &&
+          id != null) {
         print("Dowloaded Completed");
       }
-      setState(() {});
     });
     FlutterDownloader.registerCallback(downloadCallback);
   }
 
-  static void downloadCallback(id, status, progress) {
+//* Call back to download file
+  static void downloadCallback(id, status, progress) async {
     SendPort? sendPort =
         IsolateNameServer.lookupPortByName("downloader_send_port");
+
     sendPort!.send([id, status, progress]);
   }
-
-  // void bindBackgroundIsolated() {
-  //   bool isSucces = IsolateNameServer.registerPortWithName(
-  //       port.sendPort, 'downloader_send_port');
-  //   port.listen(
-  //     (dynamic data) {
-  //       String id = data[0];
-  //       DownloadTaskStatus status = data[1];
-  //       int progress = data[2];
-  //       FlutterDownloader.registerCallback(
-  //           downloadCallback);
-
-  //       setState(() {});
-  //       // if (status == DownloadTaskStatus.complete) {
-  //       // } else if (status == DownloadTaskStatus.running) {
-  //       //   Progresshud.showWithStatus("%$progress Downloaded");
-  //       // }
-  //     },
-  //     // onDone: () {
-  //     //   checkIfDictionaryUnzipped(DBFilePath);
-  //     // },
-  //     // onError: (error) {},
-  //   );
-  // }
-
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  //   IsolateNameServer.removePortNameMapping('downloader_send_port');
-  //   // recorder.closeRecorder();
-  // }
-
-  // downloadCallback(String id, DownloadTaskStatus status, int progress) {
-  //   final SendPort? send =
-  //       IsolateNameServer.lookupPortByName('downloader_send_port');
-  //   send!.send([id, status, progress]);
-  // }
-
-  // void oncePlayRecord(bool isplayed) {
-  //   isPlay = isplayed;
-  //   setState(() {});
-  // }
-
-  Future download(String url) async {
-    final status = await Permission.storage.request();
-
-    if (status.isGranted) {
-      final externalDir = await getExternalStorageDirectory();
-
-      await FlutterDownloader.enqueue(
-        url: url,
-        savedDir: externalDir!.path,
-        showNotification: true,
-        openFileFromNotification: true,
-      );
-    } else {
-      print('Permission Denied');
-    }
-  }
-
-  // Future<void> openDocument(String? filePath) async {
-  //   // await OpenDocument.openDocument(
-  //   //     filePath: filePath!,
-  //   //   );
-
-  //   // await launchUrl(Uri.parse(
-  //   //       "https://firebasestorage.googleapis.com/v0/b/telegram-da9d4.appspot.com/o/docs?alt=media&token=f4250f1b-cf3c-4272-96d0-505b21d3e0c2"));
-
-  //   if (await canLaunchUrl(Uri.parse("$filePath"))) {
-  //     await launchUrl(
-  //       Uri.parse("$filePath"),
-  //       mode: LaunchMode.externalApplication,
-  //     );
-  //   } else {
-  //     throw 'Could not launch document';
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +106,7 @@ class _MyMessageState extends State<MyMessage> {
           child: Align(
               alignment: AlignmentDirectional.topEnd,
               child: widget.messageModel!.text != null ||
-                      widget.messageModel!.docs != null
+                      widget.messageModel!.docsUrl != null
                   //* spicail to text
                   ? Container(
                       margin: EdgeInsets.only(left: 25.h),
@@ -192,27 +122,32 @@ class _MyMessageState extends State<MyMessage> {
                               ? InkWell(
                                   onTap: () async {
                                     print("Clicked");
-                                    print("${cubit.fileName}");
+                                    // if (cubit.docsLocation[1] ==
+                                    //     cubit.externalDir) {
+                                    //   print("downloaded ");
+                                    // } else {
+                                    cubit.downloadDocuments(
+                                        url: "${widget.messageModel!.docsUrl}",
+                                        fileName:
+                                            "${widget.messageModel!.docsName}");
 
-                                    // download(
-                                    //     "https://eecs.csuohio.edu/~sschung/cis430/Coronel_PPT_Ch01.pdf");
-                                    // download(
-                                    //     "https://file-examples.com/storage/fea9880a616463cab9f1575/2017/04/file_example_MP4_480_1_5MG.mp4");
-                                    download(
-                                        "https://eecs.csuohio.edu/~sschung/cis430/Coronel_PPT_Ch01.pdf");
-                                    // cubit.downloadFile(
-                                    //     "https://eecs.csuohio.edu/~sschung/cis430/Coronel_PPT_Ch01.pdf");
-                                    // openDocument(
-                                    //     "${widget.messageModel!.docs}");
+                                    print("Download is done");
+
+                                    // OpenFilex.open(
+                                    //     "/storage/emulated/0/Android/data/com.example.telegram/files/Coronel_PPT_Ch01 (3).pdf");
+
+                                    // }
                                   },
                                   child: Row(children: [
-                                    Icon(Icons.file_copy_outlined),
+                                    Text("$progress"),
+                                    // const Icon(Icons.file_copy_outlined),
                                     SizedBox(
                                       width: 1.h,
                                     ),
                                     Expanded(
                                       child: MyText(
-                                        text: "${widget.messageModel!.docs}",
+                                        text:
+                                            "${widget.messageModel!.docsName}",
                                         fontSize: 15.sp,
                                       ),
                                     )

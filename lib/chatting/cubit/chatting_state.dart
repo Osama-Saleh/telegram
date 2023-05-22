@@ -47,3 +47,4 @@ class SelectDocumentsSuccessState extends ChattingState {}
 class SelectDocumentsErrorState extends ChattingState {}
 
 class DownloadFileSuccessState extends ChattingState {}
+class CheckFileExistSuccessState extends ChattingState {}
