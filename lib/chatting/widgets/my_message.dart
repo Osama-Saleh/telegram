@@ -7,7 +7,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:open_filex/open_filex.dart';
+// import 'package:open_filex/open_filex.dart';
 // import 'package:open_filex/open_filex.dart';
 
 // import 'package:open_document/open_document.dart';
@@ -17,6 +17,7 @@ import 'package:sizer/sizer.dart';
 import 'package:telegram/Module/message_model.dart';
 import 'package:telegram/chatting/cubit/chatting_cubit.dart';
 import 'package:telegram/components/widgets/my_text.dart';
+// import 'package:telegram/state_management/home_cubit.dart';
 // import 'package:telegram/controller/local_storage/hive.dart';
 
 class MyMessage extends StatefulWidget {
@@ -45,7 +46,10 @@ class _MyMessageState extends State<MyMessage> {
   }
 
   ReceivePort port = ReceivePort();
-  int progress = 0;
+  // int progress = 0;
+  DownloadTaskStatus? status;
+  int? progress = 0;
+  String? id;
   @override
   void initState() {
     super.initState();
@@ -68,39 +72,40 @@ class _MyMessageState extends State<MyMessage> {
     //* chick folder staus (faild - completed - run -......)
     IsolateNameServer.registerPortWithName(
         port.sendPort, 'downloader_send_port');
-        print("logprogress");
-        
+    print("logprogress");
+
     port.listen((dynamic data) {
-      String? id = data[0];
-      DownloadTaskStatus status = data[1];
-      int progress = data[2];
-        print("Myprogress");
+      print("Myprogress");
+      // ChattingCubit.get(context).progres(data[2]);
       setState(() {
-        progress = data;
+        progress = data[2];
       });
-      if (status.toString() == "DownloadTaskStatus(3)" &&
-          progress == 100 &&
-          id != null) {
-        print("Dowloaded Completed");
-      }
+      // ChattingCubit.get(context)
+      //     .changeProgress(messageModel: widget.messageModel, progrss: progress);
+      print("progress$progress");
     });
+
     FlutterDownloader.registerCallback(downloadCallback);
   }
 
 //* Call back to download file
   static void downloadCallback(id, status, progress) async {
-    SendPort? sendPort =
-        IsolateNameServer.lookupPortByName("downloader_send_port");
-
-    sendPort!.send([id, status, progress]);
+    IsolateNameServer.lookupPortByName('downloader_send_port')
+        ?.send([id, status, progress]);
   }
 
   @override
   Widget build(BuildContext context) {
+    var cubit = ChattingCubit.get(context);
     return BlocConsumer<ChattingCubit, ChattingState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        // if (state is DownloadDocumentsLoadingState) {
+        //   ChattingCubit.get(context).changeProgress(
+        //       messageModel: widget.messageModel, progrss: state.progress);
+        //   print("object");
+        // }
+      },
       builder: (context, state) {
-        var cubit = ChattingCubit.get(context);
         return Padding(
           padding: EdgeInsets.only(right: 2.h, top: 2.h),
           child: Align(
@@ -126,6 +131,10 @@ class _MyMessageState extends State<MyMessage> {
                                     //     cubit.externalDir) {
                                     //   print("downloaded ");
                                     // } else {
+                                    // cubit.changeProgress(
+                                    //     messageModel: widget.messageModel,
+                                    //     progrss: progress);
+                                    print("Model ${widget.messageModel}");
                                     cubit.downloadDocuments(
                                         url: "${widget.messageModel!.docsUrl}",
                                         fileName:
@@ -139,7 +148,8 @@ class _MyMessageState extends State<MyMessage> {
                                     // }
                                   },
                                   child: Row(children: [
-                                    Text("$progress"),
+                                    Text(
+                                        "%${widget.messageModel!.progress ?? 0}"),
                                     // const Icon(Icons.file_copy_outlined),
                                     SizedBox(
                                       width: 1.h,

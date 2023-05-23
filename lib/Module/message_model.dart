@@ -9,6 +9,7 @@ class MessageModel {
   String? docsUrl;
   String? docsName;
   String? docsLocation;
+  int? progress;
   bool? onceRecordPlaying = true;
   MessageModel({
     this.senderId,
@@ -20,6 +21,7 @@ class MessageModel {
     this.docsUrl,
     this.docsName,
     this.docsLocation,
+    this.progress,
     this.onceRecordPlaying,
   });
 
@@ -34,6 +36,7 @@ class MessageModel {
       'docsUrl': docsUrl,
       'docsName': docsName,
       'docsLocation': docsLocation,
+      'progress': progress,
       'onceRecordPlaying': onceRecordPlaying,
     };
   }
@@ -49,6 +52,7 @@ class MessageModel {
       docsUrl: map['docsUrl'],
       docsName: map['docsName'],
       docsLocation: map['docsLocation'],
+      progress: map['progress'],
       onceRecordPlaying: map['onceRecordPlaying'],
     );
   }

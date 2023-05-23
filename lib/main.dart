@@ -10,6 +10,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:telegram/chatting/cubit/chatting_cubit.dart';
+import 'package:telegram/chatting/widgets/record.dart';
 import 'package:telegram/components/const.dart';
 import 'package:telegram/controller/local_storage/hive.dart';
 import 'package:telegram/login/cubit/login_cubit.dart';
@@ -17,22 +18,18 @@ import 'package:telegram/register/cubit/register_cubit.dart';
 import 'package:telegram/home/home_view.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:telegram/register/register_view.dart';
+import 'package:telegram/test.dart';
 import 'package:telegram/user/cubit/user_cubit.dart';
-
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await FlutterDownloader.initialize(
-    debug: true,
-   ignoreSsl: true
-   );
+  await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
   // FlutterDownloader.registerCallback(DownloadClass.callBack());
 
   HiveHelper.hiveInit();
   Directory dir = await getApplicationDocumentsDirectory();
-  
+
   await HiveHelper.openBox(boxName: "userData");
 
   MyConst.uidUser = HiveHelper.getData(key: "userToken");
@@ -75,33 +72,34 @@ class MyApp extends StatelessWidget {
             create: (context) => ChattingCubit()..getMessage(),
           ),
           // BlocProvider(create: (context) => HomeCubit(),),
+         
         ],
         child: Sizer(
           builder: (context, orientation, deviceType) {
             return MaterialApp(
-                debugShowCheckedModeBanner: false,
-                // useInheritedMediaQuery: true,
-                // routes: {
-                // When navigating to the "/" route, build the FirstScreen widget.
+              debugShowCheckedModeBanner: false,
+              // useInheritedMediaQuery: true,
+              // routes: {
+              // When navigating to the "/" route, build the FirstScreen widget.
 
-                // When navigating to the "/second" route, build the SecondScreen widget.
-                //   '/homeView': (context) => const HomeView(),
-                // },
-                locale: DevicePreview.locale(context),
-                builder: DevicePreview.appBuilder,
-                title: 'Flutter Demo',
-                theme: ThemeData(
-                  // is not restarted.
-                  primarySwatch: Colors.blue,
-                ),
-                home:
-                    // DisplayImage()
-                    widget
-                // CustomWebView()
-                // SettingView()
-                // Test(),
-                // RegisterView()
-                );
+              // When navigating to the "/second" route, build the SecondScreen widget.
+              //   '/homeView': (context) => const HomeView(),
+              // },
+              locale: DevicePreview.locale(context),
+              builder: DevicePreview.appBuilder,
+              title: 'Flutter Demo',
+              theme: ThemeData(
+                // is not restarted.
+                primarySwatch: Colors.blue,
+              ),
+              home:
+                  // DisplayImage()
+                  widget
+                  // CustomWebView()
+                  // SettingView()
+                  // Test(),
+              // RegisterView()
+            );
           },
         ));
   }

@@ -1,11 +1,12 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'chatting_cubit.dart';
-
 
 abstract class ChattingState {}
 
 class ChattingInitial extends ChattingState {}
 
 class PressEmojiState extends ChattingState {}
+
 class ChangekeyboardTypeState extends ChattingState {}
 
 class SendMessageLoadingState extends ChattingState {}
@@ -46,5 +47,15 @@ class SelectDocumentsSuccessState extends ChattingState {}
 
 class SelectDocumentsErrorState extends ChattingState {}
 
+class DownloadDocumentsLoadingState extends ChattingState {
+  int? progress;
+  DownloadDocumentsLoadingState({
+    this.progress,
+  });
+}
+
 class DownloadFileSuccessState extends ChattingState {}
+
 class CheckFileExistSuccessState extends ChattingState {}
+
+class ProgressState extends ChattingState {}

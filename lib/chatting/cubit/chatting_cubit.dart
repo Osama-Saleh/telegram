@@ -385,6 +385,9 @@ class ChattingCubit extends Cubit<ChattingState> {
 
   Future downloadDocuments(
       {required String url, required String? fileName}) async {
+    emit(DownloadDocumentsLoadingState());
+    print("DownloadDocumentsLoadingState");
+
     final status = await Permission.storage.request();
 
     if (status.isGranted) {
@@ -410,5 +413,17 @@ class ChattingCubit extends Cubit<ChattingState> {
     }
   }
 
- 
+  // int? progress = 0;
+  // void progres(int prog) {
+  //   progress = prog;
+  //   changeProgress(progrss: progress);
+  //   emit(ProgressState());
+  // }
+  int? prog = 0;
+  void changeProgress({MessageModel? messageModel, int? progrss}) {
+    // messageModel!.progress = progrss;
+    prog = prog !+1;
+    // print("messageModel.progress${messageModel.progress}");
+    emit(ProgressState());
+  }
 }
