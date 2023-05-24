@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
+import 'package:telegram/chatting/cubit/chatting_cubit.dart';
 import 'package:telegram/user/cubit/user_cubit.dart';
 import 'package:telegram/user/cubit/widgets/build_item_user.dart';
 import 'package:telegram/user/cubit/widgets/my_drawer.dart';
@@ -20,6 +21,8 @@ class _UserViewState extends State<UserView> {
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   GlobalKey<AnimatedListState> animatedKey = GlobalKey();
+
+  
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<UserCubit, UserState>(
@@ -50,6 +53,7 @@ class _UserViewState extends State<UserView> {
                   child: MyText(text: "Not found users", color: Colors.black),
                 )
               : Column(
+                
                   children: [
                     Expanded(
                       child: AnimatedList(

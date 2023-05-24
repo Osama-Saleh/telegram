@@ -24,7 +24,9 @@ class MyMessage extends StatefulWidget {
   MyMessage({
     super.key,
     this.messageModel,
+    this.index,
   });
+  int? index;
   MessageModel? messageModel;
   // String? fileName;
 
@@ -72,17 +74,24 @@ class _MyMessageState extends State<MyMessage> {
     //* chick folder staus (faild - completed - run -......)
     IsolateNameServer.registerPortWithName(
         port.sendPort, 'downloader_send_port');
-    print("logprogress");
+    print("logprogress: ${widget.index}");
 
     port.listen((dynamic data) {
-      print("Myprogress");
-      // ChattingCubit.get(context).progres(data[2]);
-      setState(() {
-        progress = data[2];
-      });
-      // ChattingCubit.get(context)
-      //     .changeProgress(messageModel: widget.messageModel, progrss: progress);
-      print("progress$progress");
+      // print("Myprogress");
+
+      print("iiiiii : ${widget.index}");
+      print("lllll : ${data.toString()}");
+
+      // setState(() {
+      //   progress = data[2];
+      // });
+      // print("progress : $progress");
+
+      // ChattingCubit.get(context).prog = data[2];
+      ChattingCubit.get(context)
+          .changeProgress(prog: data[2]);
+      // print("progress : ${ChattingCubit.get(context).prog}");
+      // print("progress${ChattingCubit.get(context).prog}");
     });
 
     FlutterDownloader.registerCallback(downloadCallback);
@@ -96,37 +105,43 @@ class _MyMessageState extends State<MyMessage> {
 
   @override
   Widget build(BuildContext context) {
-    var cubit = ChattingCubit.get(context);
-    return BlocConsumer<ChattingCubit, ChattingState>(
-      listener: (context, state) {
-        // if (state is DownloadDocumentsLoadingState) {
-        //   ChattingCubit.get(context).changeProgress(
-        //       messageModel: widget.messageModel, progrss: state.progress);
-        //   print("object");
-        // }
-      },
-      builder: (context, state) {
-        return Padding(
-          padding: EdgeInsets.only(right: 2.h, top: 2.h),
-          child: Align(
-              alignment: AlignmentDirectional.topEnd,
-              child: widget.messageModel!.text != null ||
-                      widget.messageModel!.docsUrl != null
-                  //* spicail to text
-                  ? Container(
-                      margin: EdgeInsets.only(left: 25.h),
-                      decoration: BoxDecoration(
-                          color: Colors.green[300]!.withOpacity(.5),
-                          borderRadius: const BorderRadiusDirectional.only(
-                              bottomEnd: Radius.circular(10),
-                              topStart: Radius.circular(10),
-                              bottomStart: Radius.circular(10))),
-                      child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: widget.messageModel!.text == null
-                              ? InkWell(
+    // var cubit = ChattingCubit.get(context);
+
+    return Padding(
+      padding: EdgeInsets.only(right: 2.h, top: 2.h),
+      child: Align(
+          alignment: AlignmentDirectional.topEnd,
+          child: widget.messageModel!.text != null ||
+                  widget.messageModel!.docsUrl != null
+              //* spicail to text
+              ? Container(
+                  margin: EdgeInsets.only(left: 25.h),
+                  decoration: BoxDecoration(
+                      color: Colors.green[300]!.withOpacity(.5),
+                      borderRadius: const BorderRadiusDirectional.only(
+                          bottomEnd: Radius.circular(10),
+                          topStart: Radius.circular(10),
+                          bottomStart: Radius.circular(10))),
+                  child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: widget.messageModel!.text == null
+                          ? BlocConsumer<ChattingCubit, ChattingState>(
+                              listener: (context, state) {},
+                              builder: (context, state) {
+                                return InkWell(
                                   onTap: () async {
                                     print("Clicked");
+                                    print("index Click :${widget.index}");
+                                    print("prog Click :${progress}");
+                                    if (widget.index == widget.index) {
+                                      ChattingCubit.get(context)
+                                          .messages![widget.index!]
+                                          .progress = ChattingCubit.get(context).prog;
+                                      setState(() {
+                                        
+                                      });
+                                      print("pppppppp${ChattingCubit.get(context).prog}");
+                                    }
                                     // if (cubit.docsLocation[1] ==
                                     //     cubit.externalDir) {
                                     //   print("downloaded ");
@@ -135,10 +150,19 @@ class _MyMessageState extends State<MyMessage> {
                                     //     messageModel: widget.messageModel,
                                     //     progrss: progress);
                                     print("Model ${widget.messageModel}");
-                                    cubit.downloadDocuments(
-                                        url: "${widget.messageModel!.docsUrl}",
-                                        fileName:
-                                            "${widget.messageModel!.docsName}");
+                                    ChattingCubit.get(context)
+                                        .downloadDocuments(
+                                            url:
+                                                "${widget.messageModel!.docsUrl}",
+                                            fileName:
+                                                "${widget.messageModel!.docsName}")
+                                        .whenComplete(() {
+                                      print("widget.index ${widget.index}");
+                                      // print("${widget.messageModel!.progress}");
+                                      // ChattingCubit.get(context).changeProgress(
+                                      //   index: widget.index,
+                                      // );
+                                    });
 
                                     print("Download is done");
 
@@ -148,8 +172,14 @@ class _MyMessageState extends State<MyMessage> {
                                     // }
                                   },
                                   child: Row(children: [
-                                    Text(
-                                        "%${widget.messageModel!.progress ?? 0}"),
+                                    widget.index == widget.index?
+                                    
+                                    Text("${ChattingCubit.get(context)
+                                          .prog}")
+                                    //     ?
+                                    // Text(
+                                    //     "%${ChattingCubit.get(context).messages![widget.index!].progress} "),
+                                    : Text("%${0}"),
                                     // const Icon(Icons.file_copy_outlined),
                                     SizedBox(
                                       width: 1.h,
@@ -162,157 +192,155 @@ class _MyMessageState extends State<MyMessage> {
                                       ),
                                     )
                                   ]),
-                                )
-                              : MyText(
-                                  text: "${widget.messageModel!.text}",
-                                  fontSize: 15.sp,
-                                )
-                          // : Image(image: NetworkImage("${messageModel!.image}"),fit: BoxFit.cover,)
-                          ),
-                    )
+                                );
+                              },
+                            )
+                          : MyText(
+                              text: "${widget.messageModel!.text}",
+                              fontSize: 15.sp,
+                            )
+                      // : Image(image: NetworkImage("${messageModel!.image}"),fit: BoxFit.cover,)
+                      ),
+                )
 
-                  //* spicail to image
-                  : widget.messageModel!.image != null
-                      ? Container(
-                          width: 40.h,
-                          height: 40.w,
-                          decoration: BoxDecoration(
-                              color: Colors.green[300]!.withOpacity(.5),
-                              borderRadius: const BorderRadiusDirectional.only(
-                                  bottomEnd: Radius.circular(10),
-                                  topStart: Radius.circular(10),
-                                  bottomStart: Radius.circular(10))),
-                          child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: InkWell(
-                                onTap: () {
-                                  // Dialog(
-                                  //   child: Container(
-                                  //     width: 200,
-                                  //     height: 200,
-                                  //     decoration: BoxDecoration(
-                                  //         image: DecorationImage(
-                                  //             image: ExactAssetImage(
-                                  //                 'assets/tamas.jpg'),
-                                  //             fit: BoxFit.cover)),
-                                  //   ),
-                                  // );
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return Container(
-                                          height: MediaQuery.of(context)
-                                              .size
-                                              .height,
-                                          // decoration: BoxDecoration(
-                                          // color: Colors.amber,
-                                          //     image: DecorationImage(
-                                          //   image: NetworkImage(
-                                          //       "${widget.messageModel!.image}"),
-                                          //   fit: BoxFit.fill,
-                                          // )),
-                                          child: PhotoView(
-                                            imageProvider: NetworkImage(
-                                              "${widget.messageModel!.image}",
-                                            ),
-                                          )
-                                          // child: Dialog(
-                                          //   child: Container(
-                                          //     child: PhotoView(
-                                          //     imageProvider: NetworkImage(
+              //* spicail to image
+              : widget.messageModel!.image != null
+                  ? Container(
+                      width: 40.h,
+                      height: 40.w,
+                      decoration: BoxDecoration(
+                          color: Colors.green[300]!.withOpacity(.5),
+                          borderRadius: const BorderRadiusDirectional.only(
+                              bottomEnd: Radius.circular(10),
+                              topStart: Radius.circular(10),
+                              bottomStart: Radius.circular(10))),
+                      child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              // Dialog(
+                              //   child: Container(
+                              //     width: 200,
+                              //     height: 200,
+                              //     decoration: BoxDecoration(
+                              //         image: DecorationImage(
+                              //             image: ExactAssetImage(
+                              //                 'assets/tamas.jpg'),
+                              //             fit: BoxFit.cover)),
+                              //   ),
+                              // );
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Container(
+                                      height:
+                                          MediaQuery.of(context).size.height,
+                                      // decoration: BoxDecoration(
+                                      // color: Colors.amber,
+                                      //     image: DecorationImage(
+                                      //   image: NetworkImage(
+                                      //       "${widget.messageModel!.image}"),
+                                      //   fit: BoxFit.fill,
+                                      // )),
+                                      child: PhotoView(
+                                        imageProvider: NetworkImage(
+                                          "${widget.messageModel!.image}",
+                                        ),
+                                      )
+                                      // child: Dialog(
+                                      //   child: Container(
+                                      //     child: PhotoView(
+                                      //     imageProvider: NetworkImage(
 
-                                          //       "${widget.messageModel!.image}",
+                                      //       "${widget.messageModel!.image}",
 
-                                          //     ),
-                                          //   ),
-                                          //   ),
-                                          //   // child: PhotoView(
-                                          //   //   imageProvider: NetworkImage(
-                                          //   //     "${widget.messageModel!.image}",
+                                      //     ),
+                                      //   ),
+                                      //   ),
+                                      //   // child: PhotoView(
+                                      //   //   imageProvider: NetworkImage(
+                                      //   //     "${widget.messageModel!.image}",
 
-                                          //   //   ),
-                                          //   // ),
-                                          // ),
-                                          );
-                                    },
-                                  );
-                                  print("object");
+                                      //   //   ),
+                                      //   // ),
+                                      // ),
+                                      );
                                 },
-                                child: Image(
-                                  image: NetworkImage(
-                                      "${widget.messageModel!.image}"),
-                                  fit: BoxFit.cover,
-                                ),
-                              )),
-                        )
-                      //* spicail to record message
-                      : Container(
-                          width: 60.w,
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                              color: Colors.green[300]!.withOpacity(.5),
-                              borderRadius: const BorderRadiusDirectional.only(
-                                  bottomEnd: Radius.circular(10),
-                                  topStart: Radius.circular(10),
-                                  bottomStart: Radius.circular(10))),
-                          child: Column(
+                              );
+                              print("object");
+                            },
+                            child: Image(
+                              image:
+                                  NetworkImage("${widget.messageModel!.image}"),
+                              fit: BoxFit.cover,
+                            ),
+                          )),
+                    )
+                  //* spicail to record message
+                  : Container(
+                      width: 60.w,
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          color: Colors.green[300]!.withOpacity(.5),
+                          borderRadius: const BorderRadiusDirectional.only(
+                              bottomEnd: Radius.circular(10),
+                              topStart: Radius.circular(10),
+                              bottomStart: Radius.circular(10))),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      String? uri =
-                                          // "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3";
-                                          "${widget.messageModel!.record}";
-                                      setState(() {
-                                        isPlay = !isPlay;
-                                        // widget.messageModel.onceRecordPlaying = true;
-                                      });
-                                      if (isPlay == false) {
-                                        audioPlayer.pause();
-                                      } else {
-                                        audioPlayer.play(UrlSource(uri));
-                                      }
-                                      print(isPlay);
-                                    },
-                                    child: CircleAvatar(
-                                      backgroundColor: Colors.green[700],
-                                      child: isPlay
-                                          ? const Icon(Icons.pause)
-                                          : const Icon(Icons.play_arrow),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Slider(
-                                      min: 0,
-                                      max: duration.inSeconds.toDouble(),
-                                      value: position.inSeconds.toDouble(),
-                                      thumbColor: Colors.green,
-                                      activeColor: Colors.green[900],
-                                      onChanged: (value) {
-                                        final position =
-                                            Duration(seconds: value.toInt());
-                                        audioPlayer.seek(position);
-                                        audioPlayer.resume();
-                                      },
-                                    ),
-                                  )
-                                ],
+                              InkWell(
+                                onTap: () {
+                                  String? uri =
+                                      // "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3";
+                                      "${widget.messageModel!.record}";
+                                  setState(() {
+                                    isPlay = !isPlay;
+                                    // widget.messageModel.onceRecordPlaying = true;
+                                  });
+                                  if (isPlay == false) {
+                                    audioPlayer.pause();
+                                  } else {
+                                    audioPlayer.play(UrlSource(uri));
+                                  }
+                                  print(isPlay);
+                                },
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.green[700],
+                                  child: isPlay
+                                      ? const Icon(Icons.pause)
+                                      : const Icon(Icons.play_arrow),
+                                ),
                               ),
-                              Row(
-                                children: [
-                                  // Text(formatTime(position.inSeconds)),
-                                  Spacer(),
-                                  Text(formatTime(
-                                      (duration - position).inSeconds)),
-                                ],
-                              ),
+                              Expanded(
+                                child: Slider(
+                                  min: 0,
+                                  max: duration.inSeconds.toDouble(),
+                                  value: position.inSeconds.toDouble(),
+                                  thumbColor: Colors.green,
+                                  activeColor: Colors.green[900],
+                                  onChanged: (value) {
+                                    final position =
+                                        Duration(seconds: value.toInt());
+                                    audioPlayer.seek(position);
+                                    audioPlayer.resume();
+                                  },
+                                ),
+                              )
                             ],
                           ),
-                        )),
-        );
-      },
+                          Row(
+                            children: [
+                              // Text(formatTime(position.inSeconds)),
+                              Spacer(),
+                              Text(formatTime((duration - position).inSeconds)),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )),
     );
   }
 }

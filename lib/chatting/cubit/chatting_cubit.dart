@@ -107,7 +107,10 @@ class ChattingCubit extends Cubit<ChattingState> {
         .snapshots()
         .listen((event) {
       messages = [];
-      print("lalala");
+      // print("lllll ${event.docs.length}");
+      event.docs.forEach((element) {
+        // print("lalala $messages");
+      });
       for (var element in event.docs) {
         messages!.add(MessageModel.fromJson(element.data()));
       }
@@ -403,8 +406,7 @@ class ChattingCubit extends Cubit<ChattingState> {
         openFileFromNotification: true,
         saveInPublicStorage: true,
       ).whenComplete(() {
-        // HiveHelper.openBox(boxName: "docsLocation");
-        // HiveHelper.setData(key:"docsLocation", value:docsLocation )
+        // changeProgress(messageModel: messages![index].progress);
       });
       docsLocation.add(externalDir!);
       print("docsLocation$docsLocation");
@@ -420,10 +422,12 @@ class ChattingCubit extends Cubit<ChattingState> {
   //   emit(ProgressState());
   // }
   int? prog = 0;
-  void changeProgress({MessageModel? messageModel, int? progrss}) {
-    // messageModel!.progress = progrss;
-    prog = prog !+1;
-    // print("messageModel.progress${messageModel.progress}");
+  void changeProgress({int? prog}) {
+    // messageModel!.progress = prog;
+    prog = prog ;
+    // print("messageModel.progress ${messages![index].progress}");
+    print("messageModel.prog ${prog}");
+    print("progress ${prog}");
     emit(ProgressState());
   }
 }

@@ -33,31 +33,31 @@ class UserCubit extends Cubit<UserState> {
     print("countUsers : ${countUsers!.length}");
   }
 
-//*==============================================================
-  //*      get messages from firebase to message model
-  //*==============================================================
-  List<MessageModel>? messages;
-  Future<void> getMessage({
-    String? receiverId,
-  }) async {
-    print("osos");
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(MyConst.uidUser)
-        .collection("Chats")
-        .doc(receiverId)
-        .collection("Messages")
-        .orderBy("dateTime")
-        .snapshots()
-        .listen((event) {
-      messages = [];
-      print("lalala");
-      event.docs.forEach((element) {
-        messages!.add(MessageModel.fromJson(element.data()));
-      });
-      print("messages ${messages!.length}");
-      emit(GetMessageSuccessState());
-      print("GetMessageSuccessState");
-    });
-  }
+// //*==============================================================
+//   //*      get messages from firebase to message model
+//   //*==============================================================
+//   List<MessageModel>? messages;
+//   Future<void> getMessage({
+//     String? receiverId,
+//   }) async {
+//     print("osos");
+//     await FirebaseFirestore.instance
+//         .collection('users')
+//         .doc(MyConst.uidUser)
+//         .collection("Chats")
+//         .doc(receiverId)
+//         .collection("Messages")
+//         .orderBy("dateTime")
+//         .snapshots()
+//         .listen((event) {
+//       messages = [];
+//       print("lalala");
+//       event.docs.forEach((element) {
+//         messages!.add(MessageModel.fromJson(element.data()));
+//       });
+//       print("messages ${messages!.length}");
+//       emit(GetMessageSuccessState());
+//       print("GetMessageSuccessState");
+//     });
+  // }
 }
