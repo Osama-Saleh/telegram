@@ -44,10 +44,13 @@ class _ChattingState extends State<ChattingView> {
   //   myRecord = FlutterSoundRecorder();
   //   // await myRecord!
   // }
+  // Future? getData;
   @override
   void initState() {
     super.initState();
     ChattingCubit.get(context).initRecorder();
+
+    // getData =
     ChattingCubit.get(context).getMessage(receiverId: widget.model!.token);
     // if (ChattingCubit.get(context).messages == null) {
     //   Future.delayed(const Duration(milliseconds: 500), () {
@@ -56,20 +59,6 @@ class _ChattingState extends State<ChattingView> {
     //   });
     // }
   }
-
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   // dispose();
-  // }
-
-  // @override
-  // void dispose() {
-  //   ChattingCubit.get(context).recorder.closeRecorder();
-  //   print("record closed");
-  //   // messageController.dispose();
-  //   super.dispose();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +127,8 @@ class _ChattingState extends State<ChattingView> {
         ),
         body: BlocConsumer<ChattingCubit, ChattingState>(
           listener: (context, state) {
-            if (state is UploadRecordSuccessState || state is SendMessageLoadingState) {
+            if (state is UploadRecordSuccessState ||
+                state is SendMessageLoadingState) {
               ChattingCubit.get(context).messageController.text = "";
 
               ChattingCubit.get(context).secondTime = 0;
@@ -151,414 +141,280 @@ class _ChattingState extends State<ChattingView> {
                   .getMessage(receiverId: widget.model!.token);
             }
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                //*=========================================================
-                //*                   List of message
-                //*=========================================================
+            return ChattingCubit.get(context).messages!.isEmpty
+                ? Center(
+                    child: MyText(
+                      text: "Say Hello 👋",
+                      fontSize: 20.sp,
+                    ),
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      //*=========================================================
+                      //*                   List of message
+                      //*=========================================================
 
-                Expanded(
-                    child: ChattingCubit.get(context).messages!.isEmpty
-                        ? Center(
-                            child: MyText(
-                              text: "Say Hello 👋",
-                              fontSize: 20.sp,
-                            ),
-                          )
-                        : ListView.separated(
-                            controller: ChattingCubit.get(context).scrollController,
-                            itemBuilder: (context, index) {
-                              if (MyConst.uidUser ==
-                                  ChattingCubit.get(context)
-                                      .messages![index]
-                                      .senderId) {
-                                //* My message
+                      Expanded(
+                          child: ListView.separated(
+                              controller:
+                                  ChattingCubit.get(context).scrollController,
+                              itemBuilder: (context, index) {
+                                if (MyConst.uidUser ==
+                                    ChattingCubit.get(context)
+                                        .messages![index]
+                                        .senderId) {
+                                  //* My message
 
-                                return MyMessage(
+                                  return MyMessage(
+                                    messageModel: ChattingCubit.get(context)
+                                        .messages![index],
+                                    index: index,
+                                    // fileName: cubit.fileName![index],
+                                  );
+                                }
+                                return
+
+                                    //* receive message
+                                    ReceiveMessage(
                                   messageModel: ChattingCubit.get(context)
                                       .messages![index],
-                                  index: index,
-                                  // fileName: cubit.fileName![index],
                                 );
-                              }
-                              return
+                              },
+                              separatorBuilder: (context, index) => SizedBox(
+                                    height: 5.h,
+                                  ),
+                              itemCount:
+                                  ChattingCubit.get(context).messages!.length)),
+                      //*========================================================
+                      //*                 input my message
 
-                                  //* receive message
-                                  ReceiveMessage(
-                                messageModel:
-                                    ChattingCubit.get(context).messages![index],
-                              );
-                            },
-                            separatorBuilder: (context, index) => SizedBox(
-                                  height: 5.h,
-                                ),
-                            itemCount:
-                                ChattingCubit.get(context).messages!.length)),
-                //*========================================================
-                //*                 input my message
+                      //*========================================================
+                      // Container(
+                      //   child: Text("${cubit.minutesTime}:${cubit.secondTime}"),
+                      // ),
 
-                //*========================================================
-                // Container(
-                //   child: Text("${cubit.minutesTime}:${cubit.secondTime}"),
-                // ),
+                      Form(
+                        key: ChattingCubit.get(context).formKey,
+                        child: Container(
+                            color: AppColor.white,
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                          controller: ChattingCubit.get(context)
+                                              .messageController,
+                                          minLines: 1,
+                                          maxLines: 5,
+                                          onTap: () {
+                                            ChattingCubit.get(context)
+                                                .isEmojiSelected = false;
 
-                Form(
-                  key: ChattingCubit.get(context).formKey,
-                  child: Container(
-                      color: AppColor.white,
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                    controller: ChattingCubit.get(context)
-                                        .messageController,
-                                    minLines: 1,
-                                    maxLines: 5,
-                                    onTap: () {
-                                      ChattingCubit.get(context)
-                                          .isEmojiSelected = false;
-
-                                      print("emoji");
-                                    },
-                                    onChanged: (value) {
-                                      ChattingCubit.get(context)
-                                          .textEditController();
-                                      // setState(() {
-                                      //   messageController.text;
-                                      // });
-                                    },
-                                    decoration: InputDecoration(
-                                      labelStyle: TextStyle(fontSize: 15.sp),
-                                      hintText: ChattingCubit.get(context)
-                                              .isChangeHintText
-                                          ? "${ChattingCubit.get(context).minutesTime}:${ChattingCubit.get(context).secondTime}"
-                                          : "Message",
-                                      hintStyle: TextStyle(fontSize: 15.sp),
-                                      prefixIcon: IconButton(
-                                          onPressed: () {
-                                            //!========================================== send voice
-                                            if (ChattingCubit.get(context)
-                                                    .isChangeHintText ==
-                                                true) {
-                                              // cubit
-                                              //     .stop(
-                                              //         receiverId:
-                                              //             widget.model!.token)
-                                              //     .whenComplete(() {
-                                              //   cubit.isChangeHintText = false;
-                                              //   cubit.hintText = "Message";
-                                              //   print("cubit.changeHintText");
-                                              // });
-                                            } else {
-                                              ChattingCubit.get(context)
-                                                  .selectEmoji();
-                                            }
-
-                                            //*===========================================
-                                            //* hide keyboardType when click in emoji icon
-                                            //*===========================================
-                                            SystemChannels.textInput
-                                                .invokeMethod("TextInput.hide");
-                                            // print(
-                                            //     "isEmoji ${cubit.isEmojiSelected}");
+                                            print("emoji");
                                           },
-                                          icon: ChattingCubit.get(context)
-                                                  .isChangeHintText
-                                              ? const Icon(Icons.close)
-                                              : const Icon(Icons
-                                                  .emoji_emotions_outlined)),
-                                      border: InputBorder.none,
-                                      contentPadding: EdgeInsets.all(3.h),
+                                          onChanged: (value) {
+                                            ChattingCubit.get(context)
+                                                .textEditController();
+                                          },
+                                          decoration: InputDecoration(
+                                            labelStyle:
+                                                TextStyle(fontSize: 15.sp),
+                                            hintText: ChattingCubit.get(context)
+                                                    .isChangeHintText
+                                                ? "${ChattingCubit.get(context).minutesTime}:${ChattingCubit.get(context).secondTime}"
+                                                : "Message",
+                                            hintStyle:
+                                                TextStyle(fontSize: 15.sp),
+                                            prefixIcon: IconButton(
+                                                onPressed: () {
+                                                  //!========================================== send voice
+                                                  if (ChattingCubit.get(context)
+                                                          .isChangeHintText ==
+                                                      true) {
+                                                    // cubit
+                                                    //     .stop(
+                                                    //         receiverId:
+                                                    //             widget.model!.token)
+                                                    //     .whenComplete(() {
+                                                    //   cubit.isChangeHintText = false;
+                                                    //   cubit.hintText = "Message";
+                                                    //   print("cubit.changeHintText");
+                                                    // });
+                                                  } else {
+                                                    ChattingCubit.get(context)
+                                                        .selectEmoji();
+                                                  }
+
+                                                  //*===========================================
+                                                  //* hide keyboardType when click in emoji icon
+                                                  //*===========================================
+                                                  SystemChannels.textInput
+                                                      .invokeMethod(
+                                                          "TextInput.hide");
+                                                  // print(
+                                                  //     "isEmoji ${cubit.isEmojiSelected}");
+                                                },
+                                                icon: ChattingCubit.get(context)
+                                                        .isChangeHintText
+                                                    ? const Icon(Icons.close)
+                                                    : const Icon(Icons
+                                                        .emoji_emotions_outlined)),
+                                            border: InputBorder.none,
+                                            contentPadding: EdgeInsets.all(3.h),
+                                          ),
+                                          keyboardType:
+                                              TextInputType.multiline),
                                     ),
-                                    keyboardType: TextInputType.multiline),
-                              ),
-                              MyIconButton(
-                                onPressed: (ChattingCubit.get(context)
-                                            .messageController
-                                            .text
-                                            .trim()
-                                            .isEmpty &&
-                                        ChattingCubit.get(context)
-                                                .secondTime! ==
-                                            0)
-                                    ? null
-                                    : () {
-                                        print(
-                                            "messageController : ${ChattingCubit.get(context).messageController.text}");
-                                        if (ChattingCubit.get(context)
-                                                .isChangeHintText ==
+                                    MyIconButton(
+                                      onPressed: (ChattingCubit.get(context)
+                                                  .messageController
+                                                  .text
+                                                  .trim()
+                                                  .isEmpty &&
+                                              ChattingCubit.get(context)
+                                                      .secondTime! ==
+                                                  0)
+                                          ? null
+                                          : () {
+                                              print(
+                                                  "messageController : ${ChattingCubit.get(context).messageController.text}");
+                                              if (ChattingCubit.get(context)
+                                                      .isChangeHintText ==
+                                                  true) {
+                                                ChattingCubit.get(context)
+                                                    .stop(
+                                                        receiverId:
+                                                            widget.model!.token)
+                                                    .whenComplete(() {
+                                                  ChattingCubit.get(context)
+                                                      .isChangeHintText = false;
+                                                  ChattingCubit.get(context)
+                                                      .hintText = "Message";
+                                                  print("cubit.changeHintText");
+                                                });
+                                              } else {
+                                                ChattingCubit.get(context)
+                                                    .sendMessage(
+                                                  receiverId:
+                                                      widget.model!.token,
+                                                  dateTime:
+                                                      DateTime.now().toString(),
+                                                  text:
+                                                      ChattingCubit.get(context)
+                                                          .messageController
+                                                          .text,
+                                                  // image: cubit.selectImage.toString(),
+                                                  // record: cubit.audioUrl,
+                                                )
+                                                    .whenComplete(() {
+                                                  ChattingCubit.get(context)
+                                                      .getMessage(
+                                                          receiverId: widget
+                                                              .model!.token)
+                                                      .whenComplete(() {
+                                                    if (ChattingCubit.get(
+                                                                context)
+                                                            .messages !=
+                                                        null) {
+                                                      Future.delayed(
+                                                        const Duration(
+                                                            milliseconds: 1000),
+                                                        () {
+                                                          ChattingCubit.get(
+                                                                  context)
+                                                              .scrollController
+                                                              .animateTo(
+                                                                  ChattingCubit.get(
+                                                                          context)
+                                                                      .scrollController
+                                                                      .position
+                                                                      .maxScrollExtent,
+                                                                  duration: const Duration(
+                                                                      milliseconds:
+                                                                          100),
+                                                                  curve: Curves
+                                                                      .easeIn);
+                                                        },
+                                                      );
+                                                      print("MaxScroll");
+                                                      // print("MaxScroll ${cubit.messages![0].record}");
+                                                    }
+                                                  });
+                                                });
+                                              }
+                                            },
+                                      icon: Icons.send,
+                                    ),
+                                    MyIconButton(
+                                        onPressed: () {
+                                          ChattingCubit.get(context)
+                                              .selectDocuments(
+                                                  receiverId:
+                                                      widget.model!.token);
+                                        },
+                                        icon: Icons.attach_file_sharp),
+                                    InkWell(
+                                      onLongPress: () async {
+                                        if (ChattingCubit.get(context).isMice ==
                                             true) {
                                           ChattingCubit.get(context)
-                                              .stop(
-                                                  receiverId:
-                                                      widget.model!.token)
+                                              .record()
                                               .whenComplete(() {
+                                            print("Recorder");
                                             ChattingCubit.get(context)
-                                                .isChangeHintText = false;
-                                            ChattingCubit.get(context)
-                                                .hintText = "Message";
-                                            print("cubit.changeHintText");
+                                                .timeRecord();
+                                            //!----------------------------------------------;
                                           });
+                                          print("long");
+                                          // cubit.hintText = "${cubit.minutesTime} : ${cubit.secondTime}";
+                                          ChattingCubit.get(context)
+                                              .isChangeHintText = true;
+                                          print(
+                                              "isRecorderReady : ${ChattingCubit.get(context).isRecorderReady}");
                                         } else {
                                           ChattingCubit.get(context)
-                                              .sendMessage(
-                                            receiverId: widget.model!.token,
-                                            dateTime: DateTime.now().toString(),
-                                            text: ChattingCubit.get(context)
-                                                .messageController
-                                                .text,
-                                            // image: cubit.selectImage.toString(),
-                                            // record: cubit.audioUrl,
-                                          )
-                                              .whenComplete(() {
-                                            ChattingCubit.get(context)
-                                                .getMessage(
-                                                    receiverId:
-                                                        widget.model!.token)
-                                                .whenComplete(() {
-                                              if (ChattingCubit.get(context)
-                                                      .messages !=
-                                                  null) {
-                                                Future.delayed(
-                                                  const Duration(
-                                                      milliseconds: 1000),
-                                                  () {
-                                                    ChattingCubit.get(context).scrollController.animateTo(
-                                                        ChattingCubit.get(context).scrollController
-                                                            .position
-                                                            .maxScrollExtent,
-                                                        duration:
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    100),
-                                                        curve: Curves.easeIn);
-                                                  },
-                                                );
-                                                print("MaxScroll");
-                                                // print("MaxScroll ${cubit.messages![0].record}");
-                                              }
-                                              // ChattingCubit.get(context)
-                                              //     .messageController
-                                              //     .text = "";
-
-                                              // ChattingCubit.get(context)
-                                              //     .secondTime = 0;
-                                              // ChattingCubit.get(context)
-                                              //     .minutesTime = 0;
-                                            });
-                                          });
-                                          //     .whenComplete(() {
-                                          //   if (ChattingCubit.get(context)
-                                          //           .messages !=
-                                          //       null) {
-                                          //     Future.delayed(
-                                          //       const Duration(
-                                          //           milliseconds: 1000),
-                                          //       () {
-                                          //         scrollController.animateTo(
-                                          //             scrollController.position
-                                          //                 .maxScrollExtent,
-                                          //             duration: const Duration(
-                                          //                 milliseconds: 100),
-                                          //             curve: Curves.easeIn);
-                                          //       },
-                                          //     );
-                                          //     print("MaxScroll");
-                                          //     // print("MaxScroll ${cubit.messages![0].record}");
-                                          //   }
-                                          //   messageController.text = " ";
-                                          //   ChattingCubit.get(context)
-                                          //       .secondTime = 0;
-                                          //   ChattingCubit.get(context)
-                                          //       .minutesTime = 0;
-                                          // });
+                                              .setSelectImage(
+                                                  receiverId:
+                                                      widget.model!.token);
                                         }
                                       },
-                                icon: Icons.send,
-                              ),
-                              // MyElevatedButton(
-                              //   onPressed: () {
-                              //     cubit.setSelectImage(
-                              //         receiverId: widget.model!.token);
-                              //   },
-
-                              // ),
-                              // ElevatedButton(onPressed: (){}, child: Icon(Icons.image_outlined)),
-                              MyIconButton(
-                                  onPressed: () {
-                                    ChattingCubit.get(context).selectDocuments(
-                                        receiverId: widget.model!.token);
-                                  },
-                                  icon: Icons.attach_file_sharp),
-                              InkWell(
-                                onLongPress: () async {
-                                  if (ChattingCubit.get(context).isMice ==
-                                      true) {
-                                    ChattingCubit.get(context)
-                                        .record()
-                                        .whenComplete(() {
-                                      print("Recorder");
-                                      ChattingCubit.get(context).timeRecord();
-                                      //!----------------------------------------------;
-                                    });
-                                    print("long");
-                                    // setState(() {});
-                                    // cubit.hintText = "${cubit.minutesTime} : ${cubit.secondTime}";
-                                    ChattingCubit.get(context)
-                                        .isChangeHintText = true;
-                                    print(
-                                        "isRecorderReady : ${ChattingCubit.get(context).isRecorderReady}");
-                                  } else {
-                                    ChattingCubit.get(context).setSelectImage(
-                                        receiverId: widget.model!.token);
-                                  }
-                                },
-                                child: MyIconButton(
-                                  onPressed: () {
-                                    ChattingCubit.get(context).changeMice();
-                                    // setState(() {
-                                    //   isMice = !isMice;
-                                    // });
-                                  },
-                                  icon: ChattingCubit.get(context).isMice
-                                      ? Icons.mic_none_rounded
-                                      : Icons.image_outlined,
+                                      child: MyIconButton(
+                                        onPressed: () {
+                                          ChattingCubit.get(context)
+                                              .changeMice();
+                                        },
+                                        icon: ChattingCubit.get(context).isMice
+                                            ? Icons.mic_none_rounded
+                                            : Icons.image_outlined,
+                                      ),
+                                    )
+                                  ],
                                 ),
-                              )
-                            ],
-                          ),
-                          if (ChattingCubit.get(context).isEmojiSelected ==
-                              true)
-                            Container(
-                              height: 30.h,
-                              width: double.infinity,
-                              child: EmojiPicker(
-                                textEditingController:
-                                    ChattingCubit.get(context)
-                                        .messageController,
-                                onEmojiSelected: (category, emoji) {
-                                  ChattingCubit.get(context)
-                                      .textEditController();
-                                  // setState(() {
-                                  //   messageController;
-                                  // });
-                                },
-                              ),
-                            )
-                        ],
-                      )),
-                ),
-                //*
-                // if (cubit.isEmojiSelected == true)
-                //   Expanded(
-                //     child: Container(
-                //       height: 50.h,
-                //       width: double.infinity,
-                //       child: EmojiPicker(
-                //         textEditingController: messageController,
-                //         onEmojiSelected: (category, emoji) {
-                //           setState(() {
-                //             messageController;
-                //           });
-                //         },
-                //       ),
-                //     ),
-                //   )
-                // Container(
-                //   height: 10.h,
-                //   width: double.infinity,
-                //   color: AppColor.white,
-                //   padding: EdgeInsets.only(left: 2.h, right: 2.h),
-                //   child: Row(
-                //     children: [
-                //       MyIconButton(
-                //         onPressed: () {},
-                //         icon: Icons.emoji_emotions_outlined,
-                //       ),
-                //       SizedBox(
-                //         width: 3.w,
-                //       ),
-                //       Expanded(
-                //         child: TextFormField(
-                //           controller: messageController,
-                //           keyboardType: TextInputType.multiline,
-                //           minLines: 1,
-                //           maxLines: 5,
-                //           onChanged: (value) {
-                //             setState(() {});
-                //             messageController.text = value.toString();
-                //             print(value);
-                //           },
-
-                //           decoration: InputDecoration(
-                //             // labelText: labelText,
-                //             labelStyle: TextStyle(fontSize: 15.sp),
-                //             hintText: "Message",
-                //             hintStyle: TextStyle(fontSize: 15.sp),
-
-                //             border: InputBorder.none,
-                //             contentPadding: EdgeInsets.all(3.h),
-                //           ),
-
-                //         ),
-                //         //  MyTextFormField(
-                //         //     controller: messageController,
-                //         //     hintText: "Message",
-                //         //     border: InputBorder.none),
-                //       ),
-                //       MyIconButton(
-                //         onPressed: () {
-                //           cubit.sendMessage(
-                //               receiverId: widget.model!.token,
-                //               dateTime: DateTime.now().toString(),
-                //               text: messageController.text);
-                //         },
-                //         icon: Icons.send,
-                //       ),
-                //       // SizedBox(width: 5.w,),
-                //       MyIconButton(
-                //         onPressed: () {},
-                //         icon: Icons.mic_none_rounded,
-                //       )
-                //     ],
-                //   ),
-                // )
-              ],
-            );
+                                if (ChattingCubit.get(context)
+                                        .isEmojiSelected ==
+                                    true)
+                                  Container(
+                                    height: 30.h,
+                                    width: double.infinity,
+                                    child: EmojiPicker(
+                                      textEditingController:
+                                          ChattingCubit.get(context)
+                                              .messageController,
+                                      onEmojiSelected: (category, emoji) {
+                                        ChattingCubit.get(context)
+                                            .textEditController();
+                                      },
+                                    ),
+                                  )
+                              ],
+                            )),
+                      ),
+                    ],
+                  );
+            ;
           },
         ));
   }
 }
-
-// class NewWidget extends StatelessWidget {
-//   const NewWidget({
-//     super.key,
-//     required this.cubit,
-//   });
-
-//   final ChattingCubit cubit;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return StreamBuilder(
-//       stream: cubit.recorder.onProgress,
-//       builder: (context, snapshot) {
-//         final duraton =
-//             snapshot.hasData ? snapshot.data!.duration : Duration.zero;
-
-//         String twoDigits(int n) => n.toString().padLeft(0);
-//         final twoDigitsMinutes = twoDigits(duraton.inMinutes.remainder(60));
-//         final twoDigitsSeconds = twoDigits(duraton.inSeconds.remainder(60));
-
-//         return MyText(
-//           text: "${twoDigitsMinutes} : $twoDigitsSeconds",
-//           fontSize: 20,
-//           fontWeight: FontWeight.bold,
-//         );
-//       },
-//     );
-//   }
-// }

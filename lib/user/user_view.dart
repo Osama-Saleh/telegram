@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
-import 'package:telegram/chatting/cubit/chatting_cubit.dart';
 import 'package:telegram/user/cubit/user_cubit.dart';
 import 'package:telegram/user/cubit/widgets/build_item_user.dart';
 import 'package:telegram/user/cubit/widgets/my_drawer.dart';
@@ -18,18 +17,17 @@ class UserView extends StatefulWidget {
 }
 
 class _UserViewState extends State<UserView> {
-  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-
-  GlobalKey<AnimatedListState> animatedKey = GlobalKey();
-
   
+
+ 
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<UserCubit, UserState>(
       listener: (context, state) {},
       builder: (context, state) {
         return Scaffold(
-          key: scaffoldKey,
+          key: UserCubit.get(context).scaffoldKey,
           appBar: MyAppBar(
             title: "Telegram",
             onPressed1: () {
@@ -38,7 +36,7 @@ class _UserViewState extends State<UserView> {
             icon1: Icons.search,
             leading: IconButton(
                 onPressed: () {
-                  scaffoldKey.currentState!.openDrawer();
+                  UserCubit.get(context).scaffoldKey.currentState!.openDrawer();
                 },
                 icon: Icon(
                   Icons.menu,
@@ -53,11 +51,10 @@ class _UserViewState extends State<UserView> {
                   child: MyText(text: "Not found users", color: Colors.black),
                 )
               : Column(
-                
                   children: [
                     Expanded(
                       child: AnimatedList(
-                        key: animatedKey,
+                        key: UserCubit.get(context).animatedKey,
                         physics: const BouncingScrollPhysics(),
                         // reverse: true,
                         itemBuilder: (context, index, animation) {
@@ -83,8 +80,7 @@ class _UserViewState extends State<UserView> {
                             )),
                             // sizeFactor: animation,
                             child: BuildItemsUser(
-                              model:
-                                  UserCubit.get(context).countUsers![index],
+                              model: UserCubit.get(context).countUsers![index],
                               // name:
                               //     "${HomeCubit.get(context).userModel!.fName} ${HomeCubit.get(context).userModel!.fName}",
                             ),

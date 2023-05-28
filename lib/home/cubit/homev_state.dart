@@ -1,6 +1,6 @@
 part of 'homev_cubit.dart';
 
-@immutable
+
 abstract class HomevState {}
 
 class HomevInitial extends HomevState {}

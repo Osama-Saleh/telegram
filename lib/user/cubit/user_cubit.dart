@@ -1,8 +1,8 @@
 // ignore_for_file: avoid_print, avoid_function_literals_in_foreach_calls, await_only_futures
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:telegram/Module/message_model.dart';
 import 'package:telegram/Module/user_model_fire.dart';
 import 'package:telegram/components/const.dart';
 
@@ -12,6 +12,9 @@ class UserCubit extends Cubit<UserState> {
   UserCubit() : super(UserInitial());
   static UserCubit get(context) => BlocProvider.of(context);
 
+GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  GlobalKey<AnimatedListState> animatedKey = GlobalKey();
   //*=============================================
   //?========= Get All user in application =======
   //*=============================================
@@ -37,27 +40,30 @@ class UserCubit extends Cubit<UserState> {
 //   //*      get messages from firebase to message model
 //   //*==============================================================
 //   List<MessageModel>? messages;
-//   Future<void> getMessage({
-//     String? receiverId,
-//   }) async {
-//     print("osos");
-//     await FirebaseFirestore.instance
-//         .collection('users')
-//         .doc(MyConst.uidUser)
-//         .collection("Chats")
-//         .doc(receiverId)
-//         .collection("Messages")
-//         .orderBy("dateTime")
-//         .snapshots()
-//         .listen((event) {
-//       messages = [];
-//       print("lalala");
-//       event.docs.forEach((element) {
-//         messages!.add(MessageModel.fromJson(element.data()));
-//       });
-//       print("messages ${messages!.length}");
-//       emit(GetMessageSuccessState());
-//       print("GetMessageSuccessState");
-//     });
+  // Future<void> getMessage({
+  //   String? receiverId,
+  // }) async {
+  //     // print("messages ${ChattingCubit.messages![0].onceRecordPlaying}");
+  //   await FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(MyConst.uidUser)
+  //       .collection("Chats")
+  //       .doc(receiverId)
+  //       .collection("Messages")
+  //       .orderBy("dateTime")
+  //       .snapshots()
+  //       .listen((event) {
+  //     // messages = [];
+  //     // print("lllll ${event.docs.length}");
+  //     event.docs.forEach((element) {
+  //       // print("lalala $messages");
+  //     });
+  //     for (var element in event.docs) {
+  //       // ChattingCubit.get(context).messages!.add(MessageModel.fromJson(element.data()));
+  //     }
+  //     print("messages ${ChattingCubit.messages![0].onceRecordPlaying}");
+  //     emit(GetMessageSuccessState());
+  //     print("GetMessageSuccessState");
+  //   });
   // }
 }

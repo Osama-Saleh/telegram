@@ -10,7 +10,6 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:telegram/chatting/cubit/chatting_cubit.dart';
-import 'package:telegram/chatting/widgets/record.dart';
 import 'package:telegram/components/const.dart';
 import 'package:telegram/controller/local_storage/hive.dart';
 import 'package:telegram/login/cubit/login_cubit.dart';
@@ -18,7 +17,6 @@ import 'package:telegram/register/cubit/register_cubit.dart';
 import 'package:telegram/home/home_view.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:telegram/register/register_view.dart';
-import 'package:telegram/test.dart';
 import 'package:telegram/user/cubit/user_cubit.dart';
 
 void main() async {

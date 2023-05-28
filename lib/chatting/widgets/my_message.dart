@@ -50,7 +50,7 @@ class _MyMessageState extends State<MyMessage> {
   ReceivePort port = ReceivePort();
   // int progress = 0;
   DownloadTaskStatus? status;
-  int? progress = 0;
+  // int? progress = 0;
   String? id;
   @override
   void initState() {
@@ -88,8 +88,9 @@ class _MyMessageState extends State<MyMessage> {
       // print("progress : $progress");
 
       // ChattingCubit.get(context).prog = data[2];
-      ChattingCubit.get(context)
-          .changeProgress(prog: data[2]);
+    
+      // ChattingCubit.get(context)
+      //     .changeProgress(model: widget.messageModel, prog: data[2]);
       // print("progress : ${ChattingCubit.get(context).prog}");
       // print("progress${ChattingCubit.get(context).prog}");
     });
@@ -132,23 +133,26 @@ class _MyMessageState extends State<MyMessage> {
                                   onTap: () async {
                                     print("Clicked");
                                     print("index Click :${widget.index}");
-                                    print("prog Click :${progress}");
-                                    if (widget.index == widget.index) {
-                                      ChattingCubit.get(context)
-                                          .messages![widget.index!]
-                                          .progress = ChattingCubit.get(context).prog;
-                                      setState(() {
-                                        
-                                      });
-                                      print("pppppppp${ChattingCubit.get(context).prog}");
-                                    }
-                                    // if (cubit.docsLocation[1] ==
-                                    //     cubit.externalDir) {
+                                    // print("prog Click :${progress}");
+                                    // ChattingCubit.get(context).changeProgress(
+                                    //     model: widget.messageModel,
+                                    //     prog: ChattingCubit.get(context)
+                                    //         .progress);
+                                    // if (widget.index == widget.index) {
+                                    // ChattingCubit.get(context)
+                                    //     .messages![widget.index!]
+                                    //     .progress = ChattingCubit.get(context).prog;
+
+                                    // print("pppppppp${ChattingCubit.get(context).prog}");
+                                    // }
+                                    // if (ChattingCubit.get(context).docsLocation[widget.index!] ==
+                                    //     ChattingCubit.get(context).externalDir) {
                                     //   print("downloaded ");
-                                    // } else {
-                                    // cubit.changeProgress(
-                                    //     messageModel: widget.messageModel,
-                                    //     progrss: progress);
+                                    // }
+                                    //  else {
+                                    // ChattingCubit.get(context).changeProgress(
+                                    //     model: widget.messageModel,
+                                    //     prog: progress);
                                     print("Model ${widget.messageModel}");
                                     ChattingCubit.get(context)
                                         .downloadDocuments(
@@ -172,14 +176,14 @@ class _MyMessageState extends State<MyMessage> {
                                     // }
                                   },
                                   child: Row(children: [
-                                    widget.index == widget.index?
-                                    
-                                    Text("${ChattingCubit.get(context)
-                                          .prog}")
+                                    // widget.index == widget.index?
+
+                                    Text(
+                                        "${widget.messageModel!.progress ?? 0}"),
                                     //     ?
                                     // Text(
                                     //     "%${ChattingCubit.get(context).messages![widget.index!].progress} "),
-                                    : Text("%${0}"),
+                                    // : Text("%${0}"),
                                     // const Icon(Icons.file_copy_outlined),
                                     SizedBox(
                                       width: 1.h,

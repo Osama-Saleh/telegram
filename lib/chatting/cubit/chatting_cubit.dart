@@ -11,13 +11,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_sound/public/flutter_sound_recorder.dart';
-import 'package:hive_flutter/adapters.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:telegram/Module/message_model.dart';
 import 'package:telegram/components/const.dart';
-import 'package:telegram/controller/local_storage/hive.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 part 'chatting_state.dart';
 
@@ -409,25 +409,48 @@ class ChattingCubit extends Cubit<ChattingState> {
     final status = await Permission.storage.request();
 
     if (status.isGranted) {
-      final filPaht = await getExternalStorageDirectory();
-      externalDir = "${filPaht!.path}/${fileName}}";
+      // final filPaht = await getExternalStorageDirectory();
+      final directory = await getApplicationDocumentsDirectory();
+      final filaPath = File("${directory.path}/$fileName");
 
-      print("externalDir $externalDir");
+      // externalDir = "${filPaht}${fileName}";
+
+      // print("filePaht : ${filPaht.exists()}");
+      print("filePaht : ${filaPath}");
+
+      print("externalDir1 $externalDir");
 
       await FlutterDownloader.enqueue(
         url: url,
-        savedDir: filPaht.path,
+        savedDir: filaPath.path,
         showNotification: true,
         openFileFromNotification: true,
         saveInPublicStorage: true,
       ).whenComplete(() {
-        // changeProgress(messageModel: messages![index].progress);
+        print("externalDir2 : $externalDir");
+        CheckFileExit(externalDir: filaPath.path);
+        // OpenFile.open("$externalDir");
+
+        // print("urLFile : $url");
+        // launchUrl(Uri.file(docsLocation[0]));
+        // docsLocation.add(externalDir!);
       });
-      docsLocation.add(externalDir!);
       print("docsLocation$docsLocation");
     } else {
       print('Permission Denied');
     }
+  }
+
+  bool fileExist = false;
+  void CheckFileExit({String? externalDir}) async {
+    print("externalDir3 : $externalDir");
+
+    // bool fileChekExist = await File(externalDir!).exists();
+    bool fileChekExist = await File("Internal storageDownload").exists();
+    print("fileExist1 : $fileChekExist");
+    // print("fileExist2 : $fileExist");
+    emit(CheckFileExitState());
+    print("CheckFileExitState");
   }
 
   // int? progress = 0;
@@ -436,13 +459,12 @@ class ChattingCubit extends Cubit<ChattingState> {
   //   changeProgress(progrss: progress);
   //   emit(ProgressState());
   // }
-  int? prog = 0;
-  void changeProgress({int? prog}) {
-    // messageModel!.progress = prog;
-    prog = prog;
-    // print("messageModel.progress ${messages![index].progress}");
-    print("messageModel.prog ${prog}");
-    print("progress ${prog}");
+  int? progress = 0;
+  void changeProgress({MessageModel? model, int? prog}) {
+    progress = prog;
+    model!.progress = progress;
+    print("messageModel.progress ${progress}");
+    // print("messageModel.progress ${model.progress}");
     emit(ProgressState());
   }
 }
