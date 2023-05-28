@@ -26,12 +26,12 @@ class ChattingView extends StatefulWidget {
 }
 
 class _ChattingState extends State<ChattingView> {
-  TextEditingController messageController = TextEditingController();
-  ScrollController scrollController = ScrollController();
-  var formKey = GlobalKey<FormState>();
-  bool isMice = false;
-  String? hintText = "Message";
-  int? num = 0;
+  // TextEditingController messageController = TextEditingController();
+  // ScrollController scrollController = ScrollController();
+  // var formKey = GlobalKey<FormState>();
+  // bool isMice = false;
+  // String? hintText = "Message";
+  // int? num = 0;
   //!==============================================
   // FlutterSoundRecorder? myRecord;
   // final audioPlayer = AssetsAudioPlayer();
@@ -57,11 +57,11 @@ class _ChattingState extends State<ChattingView> {
     // }
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // dispose();
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   // dispose();
+  // }
 
   // @override
   // void dispose() {
@@ -137,9 +137,16 @@ class _ChattingState extends State<ChattingView> {
           ),
         ),
         body: BlocConsumer<ChattingCubit, ChattingState>(
-          listener: (context, state) {},
+          listener: (context, state) {
+            if (state is UploadRecordSuccessState || state is SendMessageLoadingState) {
+              ChattingCubit.get(context).messageController.text = "";
+
+              ChattingCubit.get(context).secondTime = 0;
+              ChattingCubit.get(context).minutesTime = 0;
+            }
+          },
           builder: (context, state) {
-            if (state == SendMessageSuccessState) {
+            if (state is SendMessageSuccessState) {
               ChattingCubit.get(context)
                   .getMessage(receiverId: widget.model!.token);
             }
@@ -160,7 +167,7 @@ class _ChattingState extends State<ChattingView> {
                             ),
                           )
                         : ListView.separated(
-                            controller: scrollController,
+                            controller: ChattingCubit.get(context).scrollController,
                             itemBuilder: (context, index) {
                               if (MyConst.uidUser ==
                                   ChattingCubit.get(context)
@@ -197,7 +204,7 @@ class _ChattingState extends State<ChattingView> {
                 // ),
 
                 Form(
-                  key: formKey,
+                  key: ChattingCubit.get(context).formKey,
                   child: Container(
                       color: AppColor.white,
                       child: Column(
@@ -206,19 +213,22 @@ class _ChattingState extends State<ChattingView> {
                             children: [
                               Expanded(
                                 child: TextFormField(
-                                    controller: messageController,
+                                    controller: ChattingCubit.get(context)
+                                        .messageController,
                                     minLines: 1,
                                     maxLines: 5,
                                     onTap: () {
-                                      setState(() {
-                                        ChattingCubit.get(context)
-                                            .isEmojiSelected = false;
-                                      });
+                                      ChattingCubit.get(context)
+                                          .isEmojiSelected = false;
+
+                                      print("emoji");
                                     },
                                     onChanged: (value) {
-                                      setState(() {
-                                        messageController.text;
-                                      });
+                                      ChattingCubit.get(context)
+                                          .textEditController();
+                                      // setState(() {
+                                      //   messageController.text;
+                                      // });
                                     },
                                     decoration: InputDecoration(
                                       labelStyle: TextStyle(fontSize: 15.sp),
@@ -266,7 +276,9 @@ class _ChattingState extends State<ChattingView> {
                                     keyboardType: TextInputType.multiline),
                               ),
                               MyIconButton(
-                                onPressed: (messageController.text
+                                onPressed: (ChattingCubit.get(context)
+                                            .messageController
+                                            .text
                                             .trim()
                                             .isEmpty &&
                                         ChattingCubit.get(context)
@@ -275,7 +287,7 @@ class _ChattingState extends State<ChattingView> {
                                     ? null
                                     : () {
                                         print(
-                                            "messageController : ${messageController.text}");
+                                            "messageController : ${ChattingCubit.get(context).messageController.text}");
                                         if (ChattingCubit.get(context)
                                                 .isChangeHintText ==
                                             true) {
@@ -295,7 +307,9 @@ class _ChattingState extends State<ChattingView> {
                                               .sendMessage(
                                             receiverId: widget.model!.token,
                                             dateTime: DateTime.now().toString(),
-                                            text: messageController.text,
+                                            text: ChattingCubit.get(context)
+                                                .messageController
+                                                .text,
                                             // image: cubit.selectImage.toString(),
                                             // record: cubit.audioUrl,
                                           )
@@ -312,8 +326,8 @@ class _ChattingState extends State<ChattingView> {
                                                   const Duration(
                                                       milliseconds: 1000),
                                                   () {
-                                                    scrollController.animateTo(
-                                                        scrollController
+                                                    ChattingCubit.get(context).scrollController.animateTo(
+                                                        ChattingCubit.get(context).scrollController
                                                             .position
                                                             .maxScrollExtent,
                                                         duration:
@@ -326,12 +340,14 @@ class _ChattingState extends State<ChattingView> {
                                                 print("MaxScroll");
                                                 // print("MaxScroll ${cubit.messages![0].record}");
                                               }
-                                              messageController.text = " ";
+                                              // ChattingCubit.get(context)
+                                              //     .messageController
+                                              //     .text = "";
 
-                                              ChattingCubit.get(context)
-                                                  .secondTime = 0;
-                                              ChattingCubit.get(context)
-                                                  .minutesTime = 0;
+                                              // ChattingCubit.get(context)
+                                              //     .secondTime = 0;
+                                              // ChattingCubit.get(context)
+                                              //     .minutesTime = 0;
                                             });
                                           });
                                           //     .whenComplete(() {
@@ -379,7 +395,8 @@ class _ChattingState extends State<ChattingView> {
                                   icon: Icons.attach_file_sharp),
                               InkWell(
                                 onLongPress: () async {
-                                  if (isMice == true) {
+                                  if (ChattingCubit.get(context).isMice ==
+                                      true) {
                                     ChattingCubit.get(context)
                                         .record()
                                         .whenComplete(() {
@@ -388,12 +405,12 @@ class _ChattingState extends State<ChattingView> {
                                       //!----------------------------------------------;
                                     });
                                     print("long");
-                                    setState(() {});
+                                    // setState(() {});
                                     // cubit.hintText = "${cubit.minutesTime} : ${cubit.secondTime}";
                                     ChattingCubit.get(context)
                                         .isChangeHintText = true;
                                     print(
-                                        "${ChattingCubit.get(context).isRecorderReady}");
+                                        "isRecorderReady : ${ChattingCubit.get(context).isRecorderReady}");
                                   } else {
                                     ChattingCubit.get(context).setSelectImage(
                                         receiverId: widget.model!.token);
@@ -401,11 +418,12 @@ class _ChattingState extends State<ChattingView> {
                                 },
                                 child: MyIconButton(
                                   onPressed: () {
-                                    setState(() {
-                                      isMice = !isMice;
-                                    });
+                                    ChattingCubit.get(context).changeMice();
+                                    // setState(() {
+                                    //   isMice = !isMice;
+                                    // });
                                   },
-                                  icon: isMice
+                                  icon: ChattingCubit.get(context).isMice
                                       ? Icons.mic_none_rounded
                                       : Icons.image_outlined,
                                 ),
@@ -418,11 +436,15 @@ class _ChattingState extends State<ChattingView> {
                               height: 30.h,
                               width: double.infinity,
                               child: EmojiPicker(
-                                textEditingController: messageController,
+                                textEditingController:
+                                    ChattingCubit.get(context)
+                                        .messageController,
                                 onEmojiSelected: (category, emoji) {
-                                  setState(() {
-                                    messageController;
-                                  });
+                                  ChattingCubit.get(context)
+                                      .textEditController();
+                                  // setState(() {
+                                  //   messageController;
+                                  // });
                                 },
                               ),
                             )

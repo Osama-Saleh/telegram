@@ -31,6 +31,9 @@ class UploadImageErrorState extends ChattingState {}
 
 class RecordMessageSuccessState extends ChattingState {}
 
+class ChangeMiceSuccessState extends ChattingState {}
+class MessageControllerSuccessState extends ChattingState {}
+
 class TimeRecordChangeState extends ChattingState {}
 
 class PlayRecordState extends ChattingState {}

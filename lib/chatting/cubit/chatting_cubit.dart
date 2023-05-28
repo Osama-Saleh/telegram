@@ -7,6 +7,7 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_sound/public/flutter_sound_recorder.dart';
@@ -25,6 +26,8 @@ class ChattingCubit extends Cubit<ChattingState> {
 
   static ChattingCubit get(context) => BlocProvider.of(context);
 
+  ScrollController scrollController = ScrollController();
+  var formKey = GlobalKey<FormState>();
   bool isEmojiSelected = false;
   void selectEmoji() {
     isEmojiSelected = !isEmojiSelected;
@@ -203,6 +206,18 @@ class ChattingCubit extends Cubit<ChattingState> {
     // isRecorderReady = false;
     emit(RecordMessageSuccessState());
     print("RecordMessageSuccessState");
+  }
+
+  bool isMice = false;
+  void changeMice() {
+    isMice = !isMice;
+    emit(ChangeMiceSuccessState());
+  }
+
+  TextEditingController messageController = TextEditingController();
+  void textEditController() {
+    messageController = messageController;
+    emit(MessageControllerSuccessState());
   }
 
   File? audioFile;
@@ -424,7 +439,7 @@ class ChattingCubit extends Cubit<ChattingState> {
   int? prog = 0;
   void changeProgress({int? prog}) {
     // messageModel!.progress = prog;
-    prog = prog ;
+    prog = prog;
     // print("messageModel.progress ${messages![index].progress}");
     print("messageModel.prog ${prog}");
     print("progress ${prog}");
